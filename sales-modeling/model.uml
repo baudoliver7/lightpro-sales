@@ -68,11 +68,6 @@
     <generalization xmi:id="_a3Fp4NpcEeauDZ8cCIckYw" general="_-cP9wNpXEeauDZ8cCIckYw"/>
     <ownedOperation xmi:id="_KJRowNpcEeauDZ8cCIckYw" name="unitPrice"/>
   </packagedElement>
-  <packagedElement xmi:type="uml:Interface" xmi:id="_1AA6kNpcEeauDZ8cCIckYw" name="Currency">
-    <ownedOperation xmi:id="_8HpEkNpcEeauDZ8cCIckYw" name="id"/>
-    <ownedOperation xmi:id="_YkKIgNpdEeauDZ8cCIckYw" name="name"/>
-    <ownedOperation xmi:id="_ZxcbANpdEeauDZ8cCIckYw" name="shortName"/>
-  </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_eU6e0NpgEeauDZ8cCIckYw" name="Bill">
     <ownedOperation xmi:id="_V0-sANqKEeauDZ8cCIckYw" name="date"/>
     <ownedOperation xmi:id="_rn11ANqCEeauDZ8cCIckYw" name="reference"/>
@@ -170,6 +165,8 @@
   <packagedElement xmi:type="uml:Interface" xmi:id="_zXwQkNqOEeauDZ8cCIckYw" name="Company">
     <generalization xmi:id="_Hi57QNqPEeauDZ8cCIckYw" general="_GHjCcNqNEeauDZ8cCIckYw"/>
     <ownedOperation xmi:id="_cY1WYNqREeauDZ8cCIckYw" name="contact"/>
+    <ownedOperation xmi:id="_aPHzsNqYEeauDZ8cCIckYw" name="currencyName"/>
+    <ownedOperation xmi:id="_cP5_sNqYEeauDZ8cCIckYw" name="currentShortName"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_1P2aoNqOEeauDZ8cCIckYw" name="Person">
     <generalization xmi:id="_AhXLINqPEeauDZ8cCIckYw" general="_GHjCcNqNEeauDZ8cCIckYw"/>
