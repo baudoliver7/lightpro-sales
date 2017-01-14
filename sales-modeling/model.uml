@@ -155,6 +155,7 @@
     <ownedOperation xmi:id="_CsctMNqQEeauDZ8cCIckYw" name="email"/>
     <ownedOperation xmi:id="_EaOdoNqQEeauDZ8cCIckYw" name="webSite"/>
     <ownedOperation xmi:id="_KH5yINqQEeauDZ8cCIckYw" name="addresse"/>
+    <ownedOperation xmi:id="_8oH5oNqXEeauDZ8cCIckYw" name="photo"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Association" xmi:id="_Jk7IQNqNEeauDZ8cCIckYw" memberEnd="_Jk7vUNqNEeauDZ8cCIckYw _Jk89cNqNEeauDZ8cCIckYw" navigableOwnedEnd="_Jk89cNqNEeauDZ8cCIckYw">
     <ownedEnd xmi:id="_Jk7vUNqNEeauDZ8cCIckYw" name="bills" type="_eU6e0NpgEeauDZ8cCIckYw" association="_Jk7IQNqNEeauDZ8cCIckYw">
