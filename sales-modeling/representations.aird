@@ -1661,7 +1661,7 @@
       </ownedStyle>
       <actualMapping xmi:type="description_1:EdgeMapping" href="platform:/plugin/org.obeonetwork.dsl.uml2.design/description/uml2.odesign#//@ownedViewpoints[name='Design']/@ownedRepresentations[name='Class%20Diagram']/@defaultLayer/@edgeMappings[name='CD_Association']"/>
     </ownedDiagramElements>
-    <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_GHjpgNqNEeauDZ8cCIckYw" name="Tiers" tooltipText="NewModel::Tiers" incomingEdges="_JlXNINqNEeauDZ8cCIckYw _Ahd40NqPEeauDZ8cCIckYw _Hji0cNqPEeauDZ8cCIckYw" width="12" height="10">
+    <ownedDiagramElements xmi:type="diagram:DNodeList" xmi:id="_GHjpgNqNEeauDZ8cCIckYw" name="Partner" tooltipText="NewModel::Partner" incomingEdges="_JlXNINqNEeauDZ8cCIckYw _Ahd40NqPEeauDZ8cCIckYw _Hji0cNqPEeauDZ8cCIckYw" width="12" height="10">
       <target xmi:type="uml:Interface" href="model.uml#_GHjCcNqNEeauDZ8cCIckYw"/>
       <semanticElements xmi:type="uml:Interface" href="model.uml#_GHjCcNqNEeauDZ8cCIckYw"/>
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>

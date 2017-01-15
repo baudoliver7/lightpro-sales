@@ -141,7 +141,7 @@
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_7-oHI9qLEeauDZ8cCIckYw" value="*"/>
     </ownedEnd>
   </packagedElement>
-  <packagedElement xmi:type="uml:Interface" xmi:id="_GHjCcNqNEeauDZ8cCIckYw" name="Tiers">
+  <packagedElement xmi:type="uml:Interface" xmi:id="_GHjCcNqNEeauDZ8cCIckYw" name="Partner">
     <ownedOperation xmi:id="_ZOqLUNqPEeauDZ8cCIckYw" name="type"/>
     <ownedOperation xmi:id="_gH7wQNqPEeauDZ8cCIckYw" name="name"/>
     <ownedOperation xmi:id="_wDIosNqPEeauDZ8cCIckYw" name="tel"/>
