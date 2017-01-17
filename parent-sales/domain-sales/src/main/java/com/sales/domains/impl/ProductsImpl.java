@@ -16,6 +16,8 @@ import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
 import com.infrastructure.datasource.DomainsStore;
+import com.sales.domains.api.PricingMetadata;
+import com.sales.domains.api.PricingMode;
 import com.sales.domains.api.Product;
 import com.sales.domains.api.ProductMetadata;
 import com.sales.domains.api.Products;
@@ -113,6 +115,16 @@ public class ProductsImpl implements Products {
 		
 		UUID id = UUID.randomUUID();
 		ds.set(id, params);
+		
+		// créer le mode de tarification par défaut
+		PricingMetadata pricingDm = PricingImpl.dm();
+		DomainsStore pricingDs = base.domainsStore(pricingDm);
+		
+		Map<String, Object> paramsPricing = new HashMap<String, Object>();
+		paramsPricing.put(pricingDm.fixPriceKey(), 0);	
+		paramsPricing.put(pricingDm.modeIdKey(), PricingMode.FIX.id());
+		
+		pricingDs.set(id, paramsPricing);
 		
 		return new ProductImpl(this.base, id);	
 	}

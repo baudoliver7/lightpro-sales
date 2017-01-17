@@ -12,8 +12,10 @@ import com.infrastructure.core.Horodate;
 import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
+import com.sales.domains.api.Pricing;
 import com.sales.domains.api.Product;
 import com.sales.domains.api.ProductMetadata;
+import com.sales.domains.api.ProductTaxes;
 import com.securities.api.MesureUnit;
 import com.securities.impl.MesureUnitImpl;
 
@@ -89,5 +91,15 @@ public class ProductImpl implements Product {
 		params.put(dm.barCodeKey(), barCode);
 		
 		ds.set(params);					
+	}
+
+	@Override
+	public ProductTaxes taxes() {
+		return new ProductTaxesImpl(base, id);
+	}
+
+	@Override
+	public Pricing pricing() throws IOException {
+		return new PricingImpl(base, id);
 	}
 }

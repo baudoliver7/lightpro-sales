@@ -26,30 +26,21 @@
   </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_EQzyoNoyEeauDZ8cCIckYw" name="Pricing">
     <ownedOperation xmi:id="_IXU8ENoyEeauDZ8cCIckYw" name="id"/>
-    <ownedOperation xmi:id="_sat4sNpcEeauDZ8cCIckYw" name="description"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_S5LxQNoyEeauDZ8cCIckYw" memberEnd="_S5MYUNoyEeauDZ8cCIckYw _S5M_YdoyEeauDZ8cCIckYw" navigableOwnedEnd="_S5M_YdoyEeauDZ8cCIckYw">
-    <ownedEnd xmi:id="_S5MYUNoyEeauDZ8cCIckYw" name="products" type="_rvEXoNowEeauDZ8cCIckYw" association="_S5LxQNoyEeauDZ8cCIckYw">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_S5MYUdoyEeauDZ8cCIckYw"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_S5M_YNoyEeauDZ8cCIckYw" value="*"/>
-    </ownedEnd>
-    <ownedEnd xmi:id="_S5M_YdoyEeauDZ8cCIckYw" name="pricings" type="_EQzyoNoyEeauDZ8cCIckYw" association="_S5LxQNoyEeauDZ8cCIckYw">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_S5NmcNoyEeauDZ8cCIckYw"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_S5NmcdoyEeauDZ8cCIckYw" value="*"/>
-    </ownedEnd>
+    <ownedOperation xmi:id="_sat4sNpcEeauDZ8cCIckYw" name="priceSummary"/>
+    <ownedOperation xmi:id="_AzukcNu2Eea3gO3qNGikxg" name="mode"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_2NpkcNoyEeauDZ8cCIckYw" name="FixPricing">
-    <generalization xmi:id="_fWbboNpfEeauDZ8cCIckYw" general="_EQzyoNoyEeauDZ8cCIckYw"/>
     <ownedOperation xmi:id="_0IXxoNpAEeauDZ8cCIckYw" name="fixPrice"/>
+    <ownedOperation xmi:id="_ZsYqoNu3Eea3gO3qNGikxg" name="priceSummary"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_-cP9wNpXEeauDZ8cCIckYw" name="IntervalPricing">
-    <generalization xmi:id="_hQt-ENpfEeauDZ8cCIckYw" general="_EQzyoNoyEeauDZ8cCIckYw"/>
     <ownedOperation xmi:id="_jUFTENpWEeauDZ8cCIckYw" name="id"/>
     <ownedOperation xmi:id="_xDa9cNpBEeauDZ8cCIckYw" name="begin"/>
     <ownedOperation xmi:id="_ycEycNpBEeauDZ8cCIckYw" name="end"/>
-    <ownedOperation xmi:id="_15RSENpBEeauDZ8cCIckYw" name="evaluatePrice">
-      <ownedParameter xmi:id="_Po7oANpfEeauDZ8cCIckYw" name="begin"/>
-      <ownedParameter xmi:id="_RCRZgNpfEeauDZ8cCIckYw" name="end"/>
+    <ownedOperation xmi:id="_jxeVYNvlEea3gO3qNGikxg" name="price"/>
+    <ownedOperation xmi:id="_uOR20Nu2Eea3gO3qNGikxg" name="priceType"/>
+    <ownedOperation xmi:id="_j-g8wNvuEea3gO3qNGikxg" name="evaluatePrice">
+      <ownedParameter xmi:id="_lV0t8NvuEea3gO3qNGikxg" name="value"/>
     </ownedOperation>
   </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_RueVANpbEeauDZ8cCIckYw" name="FixDayInMonthIntervalPricing">
@@ -68,7 +59,7 @@
     <generalization xmi:id="_a3Fp4NpcEeauDZ8cCIckYw" general="_-cP9wNpXEeauDZ8cCIckYw"/>
     <ownedOperation xmi:id="_KJRowNpcEeauDZ8cCIckYw" name="unitPrice"/>
   </packagedElement>
-  <packagedElement xmi:type="uml:Interface" xmi:id="_eU6e0NpgEeauDZ8cCIckYw" name="Bill">
+  <packagedElement xmi:type="uml:Interface" xmi:id="_eU6e0NpgEeauDZ8cCIckYw" name="Order">
     <ownedOperation xmi:id="_V0-sANqKEeauDZ8cCIckYw" name="date"/>
     <ownedOperation xmi:id="_rn11ANqCEeauDZ8cCIckYw" name="reference"/>
     <ownedOperation xmi:id="_zaiNsNpgEeauDZ8cCIckYw" name="totalAmountHt"/>
@@ -78,7 +69,7 @@
     <ownedOperation xmi:id="_vXbAwNpkEeauDZ8cCIckYw" name="otherNote"/>
     <ownedOperation xmi:id="_V_wpkNqTEeauDZ8cCIckYw" name="seller"/>
   </packagedElement>
-  <packagedElement xmi:type="uml:Interface" xmi:id="_hPhOwNpgEeauDZ8cCIckYw" name="BillProduct">
+  <packagedElement xmi:type="uml:Interface" xmi:id="_hPhOwNpgEeauDZ8cCIckYw" name="OrderProduct">
     <generalization xmi:id="_n2SHYNpgEeauDZ8cCIckYw" general="_rvEXoNowEeauDZ8cCIckYw"/>
     <ownedOperation xmi:id="_wD_vsNpgEeauDZ8cCIckYw" name="quantity"/>
     <ownedOperation xmi:id="_kRVkgNphEeauDZ8cCIckYw" name="unitPriceHt"/>
@@ -87,7 +78,7 @@
     <ownedOperation xmi:id="_UuaoMNpsEeauDZ8cCIckYw" name="reductionAmount"/>
     <ownedOperation xmi:id="_8v5vsNpiEeauDZ8cCIckYw" name="totalAmountTtc"/>
   </packagedElement>
-  <packagedElement xmi:type="uml:Interface" xmi:id="_NTYwINpjEeauDZ8cCIckYw" name="BillProductTax">
+  <packagedElement xmi:type="uml:Interface" xmi:id="_NTYwINpjEeauDZ8cCIckYw" name="OrderProductTax">
     <generalization xmi:id="_aV_DwNpjEeauDZ8cCIckYw" general="_OF-WYNoxEeauDZ8cCIckYw"/>
     <ownedOperation xmi:id="_cwrkkNpjEeauDZ8cCIckYw" name="amount"/>
   </packagedElement>
@@ -101,7 +92,7 @@
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_iqgesdpjEeauDZ8cCIckYw" value="*"/>
     </ownedEnd>
   </packagedElement>
-  <packagedElement xmi:type="uml:Interface" xmi:id="_Angd8NpkEeauDZ8cCIckYw" name="BillDefaultFieldValue">
+  <packagedElement xmi:type="uml:Interface" xmi:id="_Angd8NpkEeauDZ8cCIckYw" name="OrderDefaultFieldValue">
     <ownedOperation xmi:id="_f-GGUNpkEeauDZ8cCIckYw" name="cgv"/>
     <ownedOperation xmi:id="_ioYiUNpkEeauDZ8cCIckYw" name="otherNote"/>
   </packagedElement>
@@ -115,31 +106,17 @@
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_zjbHINpkEeauDZ8cCIckYw" value="*"/>
     </ownedEnd>
   </packagedElement>
-  <packagedElement xmi:type="uml:Interface" xmi:id="_1fEmkNqHEeauDZ8cCIckYw" name="Quotation">
-    <generalization xmi:id="_uPvVQNqLEeauDZ8cCIckYw" general="_eU6e0NpgEeauDZ8cCIckYw"/>
-    <ownedOperation xmi:id="_pw3aYNqEEeauDZ8cCIckYw" name="status"/>
-  </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_9EOaENqHEeauDZ8cCIckYw" name="PurchaseOrder">
     <generalization xmi:id="_rtKDwNqLEeauDZ8cCIckYw" general="_eU6e0NpgEeauDZ8cCIckYw"/>
-    <ownedOperation xmi:id="__hslQNqLEeauDZ8cCIckYw" name="totalAmountPaid"/>
-    <ownedOperation xmi:id="_jN0DcNqMEeauDZ8cCIckYw" name="leftAmountToPay"/>
     <ownedOperation xmi:id="_b9l68NqIEeauDZ8cCIckYw" name="deliveryDate"/>
     <ownedOperation xmi:id="__sBGQNqIEeauDZ8cCIckYw" name="status"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_TcWdMNqJEeauDZ8cCIckYw" name="Invoice">
     <generalization xmi:id="_vn1woNqLEeauDZ8cCIckYw" general="_eU6e0NpgEeauDZ8cCIckYw"/>
-    <ownedOperation xmi:id="_u_wSYNqKEeauDZ8cCIckYw" name="paymentDate"/>
+    <ownedOperation xmi:id="_u_wSYNqKEeauDZ8cCIckYw" name="invoiceDate"/>
     <ownedOperation xmi:id="_zVMeENqJEeauDZ8cCIckYw" name="status"/>
-  </packagedElement>
-  <packagedElement xmi:type="uml:Association" xmi:id="_7-mR8NqLEeauDZ8cCIckYw" memberEnd="_7-ngENqLEeauDZ8cCIckYw _7-oHIdqLEeauDZ8cCIckYw" navigableOwnedEnd="_7-oHIdqLEeauDZ8cCIckYw">
-    <ownedEnd xmi:id="_7-ngENqLEeauDZ8cCIckYw" name="purchaseOrders" type="_9EOaENqHEeauDZ8cCIckYw" association="_7-mR8NqLEeauDZ8cCIckYw">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_7-ngEdqLEeauDZ8cCIckYw"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_7-oHINqLEeauDZ8cCIckYw" value="1"/>
-    </ownedEnd>
-    <ownedEnd xmi:id="_7-oHIdqLEeauDZ8cCIckYw" name="invoices" type="_TcWdMNqJEeauDZ8cCIckYw" aggregation="composite" association="_7-mR8NqLEeauDZ8cCIckYw">
-      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_7-oHItqLEeauDZ8cCIckYw"/>
-      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_7-oHI9qLEeauDZ8cCIckYw" value="*"/>
-    </ownedEnd>
+    <ownedOperation xmi:id="_jN0DcNqMEeauDZ8cCIckYw" name="leftAmountToPay"/>
+    <ownedOperation xmi:id="__hslQNqLEeauDZ8cCIckYw" name="totalAmountPaid"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_GHjCcNqNEeauDZ8cCIckYw" name="Partner">
     <ownedOperation xmi:id="_ZOqLUNqPEeauDZ8cCIckYw" name="type"/>
@@ -196,6 +173,78 @@
     <ownedEnd xmi:id="_SBsxMNqWEeauDZ8cCIckYw" name="businessTeams" type="_6rrF8NqVEeauDZ8cCIckYw" association="_SBrjENqWEeauDZ8cCIckYw">
       <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_SBtYQNqWEeauDZ8cCIckYw"/>
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_SBtYQdqWEeauDZ8cCIckYw" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_r4u8wNurEea3gO3qNGikxg" memberEnd="_r41qcNurEea3gO3qNGikxg _r46i8durEea3gO3qNGikxg" navigableOwnedEnd="_r46i8durEea3gO3qNGikxg">
+    <ownedEnd xmi:id="_r41qcNurEea3gO3qNGikxg" name="products" type="_rvEXoNowEeauDZ8cCIckYw" association="_r4u8wNurEea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_r4574NurEea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_r46i8NurEea3gO3qNGikxg" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_r46i8durEea3gO3qNGikxg" name="pricings" type="_EQzyoNoyEeauDZ8cCIckYw" aggregation="composite" association="_r4u8wNurEea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_r47xENurEea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_r47xEdurEea3gO3qNGikxg" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_aK3y4Nu2Eea3gO3qNGikxg" name="IntervalsPricing">
+    <ownedOperation xmi:id="_bwdbMNu3Eea3gO3qNGikxg" name="priceSummary"/>
+    <ownedOperation xmi:id="_15RSENpBEeauDZ8cCIckYw" name="evaluatePrice">
+      <ownedParameter xmi:id="_Po7oANpfEeauDZ8cCIckYw" name="value"/>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_dNIqANu2Eea3gO3qNGikxg" memberEnd="_dNJRENu2Eea3gO3qNGikxg _dNJ4Itu2Eea3gO3qNGikxg" navigableOwnedEnd="_dNJ4Itu2Eea3gO3qNGikxg">
+    <ownedEnd xmi:id="_dNJRENu2Eea3gO3qNGikxg" name="intervalsPricings" type="_aK3y4Nu2Eea3gO3qNGikxg" association="_dNIqANu2Eea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dNJ4INu2Eea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_dNJ4Idu2Eea3gO3qNGikxg" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_dNJ4Itu2Eea3gO3qNGikxg" name="intervalPricings" type="_-cP9wNpXEeauDZ8cCIckYw" aggregation="composite" association="_dNIqANu2Eea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dNKfMNu2Eea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_dNKfMdu2Eea3gO3qNGikxg" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_QOpk4Nu3Eea3gO3qNGikxg" memberEnd="_QOqL8Nu3Eea3gO3qNGikxg _QOraENu3Eea3gO3qNGikxg" navigableOwnedEnd="_QOraENu3Eea3gO3qNGikxg">
+    <ownedEnd xmi:id="_QOqL8Nu3Eea3gO3qNGikxg" name="pricings" type="_EQzyoNoyEeauDZ8cCIckYw" association="_QOpk4Nu3Eea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QOqzANu3Eea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_QOqzAdu3Eea3gO3qNGikxg" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_QOraENu3Eea3gO3qNGikxg" name="fixPricings" type="_2NpkcNoyEeauDZ8cCIckYw" association="_QOpk4Nu3Eea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QOraEdu3Eea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_QOsBINu3Eea3gO3qNGikxg" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_QvExYNu3Eea3gO3qNGikxg" memberEnd="_QvF_gNu3Eea3gO3qNGikxg _QvJC0Nu3Eea3gO3qNGikxg" navigableOwnedEnd="_QvJC0Nu3Eea3gO3qNGikxg">
+    <ownedEnd xmi:id="_QvF_gNu3Eea3gO3qNGikxg" name="pricings" type="_EQzyoNoyEeauDZ8cCIckYw" association="_QvExYNu3Eea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QvIbwNu3Eea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_QvIbwdu3Eea3gO3qNGikxg" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_QvJC0Nu3Eea3gO3qNGikxg" name="intervalsPricings" type="_aK3y4Nu2Eea3gO3qNGikxg" association="_QvExYNu3Eea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QvKQ8Nu3Eea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_QvKQ8du3Eea3gO3qNGikxg" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_hkiLMNx-Eea3gO3qNGikxg" name="Payment">
+    <ownedOperation xmi:id="_vGJWENx-Eea3gO3qNGikxg" name="reference"/>
+    <ownedOperation xmi:id="_x4hXENx-Eea3gO3qNGikxg" name="paymentDate"/>
+    <ownedOperation xmi:id="_zxN-ENx-Eea3gO3qNGikxg" name="paidAmount"/>
+    <ownedOperation xmi:id="_2T9AkNx-Eea3gO3qNGikxg" name="leftToPay"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_kq6tUNx-Eea3gO3qNGikxg" memberEnd="_kq77cNx-Eea3gO3qNGikxg _kq9JkNx-Eea3gO3qNGikxg" navigableOwnedEnd="_kq9JkNx-Eea3gO3qNGikxg">
+    <ownedEnd xmi:id="_kq77cNx-Eea3gO3qNGikxg" name="invoices" type="_TcWdMNqJEeauDZ8cCIckYw" association="_kq6tUNx-Eea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kq8igNx-Eea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_kq8igdx-Eea3gO3qNGikxg" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_kq9JkNx-Eea3gO3qNGikxg" name="payments" type="_hkiLMNx-Eea3gO3qNGikxg" aggregation="composite" association="_kq6tUNx-Eea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kq9Jkdx-Eea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_kq9woNx-Eea3gO3qNGikxg" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_jTJXMNyAEea3gO3qNGikxg" memberEnd="_jTJ-QNyAEea3gO3qNGikxg _jTJ-Q9yAEea3gO3qNGikxg" navigableOwnedEnd="_jTJ-Q9yAEea3gO3qNGikxg">
+    <ownedEnd xmi:id="_jTJ-QNyAEea3gO3qNGikxg" name="purchaseOrders" type="_9EOaENqHEeauDZ8cCIckYw" association="_jTJXMNyAEea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_jTJ-QdyAEea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_jTJ-QtyAEea3gO3qNGikxg" value="*"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="_jTJ-Q9yAEea3gO3qNGikxg" name="invoices" type="_TcWdMNqJEeauDZ8cCIckYw" association="_jTJXMNyAEea3gO3qNGikxg">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_jTKlUNyAEea3gO3qNGikxg"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_jTKlUdyAEea3gO3qNGikxg" value="*"/>
     </ownedEnd>
   </packagedElement>
 </uml:Model>
