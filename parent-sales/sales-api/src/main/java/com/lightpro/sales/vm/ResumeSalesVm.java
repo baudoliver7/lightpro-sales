@@ -1,7 +1,6 @@
 package com.lightpro.sales.vm;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 
@@ -10,7 +9,6 @@ public class ResumeSalesVm {
 	private final transient double invoiced;
 	private final transient double turnover;
 	private final transient double inCirculation;
-	private DecimalFormat df = new DecimalFormat("#.##");
 	
 	public ResumeSalesVm(){
 		throw new UnsupportedOperationException("#ResumeSalesVm()");
@@ -24,17 +22,17 @@ public class ResumeSalesVm {
     }
 	
 	@JsonGetter
-	public String invoiced(){
-		return df.format(invoiced);
+	public double invoiced(){
+		return invoiced;
 	}
 	
 	@JsonGetter
-	public String turnover() throws IOException {
-		return df.format(turnover);
+	public double turnover() throws IOException {
+		return turnover;
 	}
 	
 	@JsonGetter
-	public String inCirculation() throws IOException {
-		return df.format(inCirculation);
+	public double inCirculation() throws IOException {
+		return inCirculation;
 	}
 }
