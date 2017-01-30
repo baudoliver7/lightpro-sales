@@ -1,6 +1,7 @@
 package com.sales.domains.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -11,13 +12,13 @@ import java.util.stream.Collectors;
 
 import javax.ws.rs.NotFoundException;
 
+import com.common.utilities.convert.UUIDConvert;
 import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
 import com.infrastructure.datasource.DomainsStore;
 import com.infrastructure.datasource.Base.OrderDirection;
 import com.sales.domains.api.Currency;
-import com.sales.domains.api.EvaluatingPriceParams;
 import com.sales.domains.api.IntervalPricing;
 import com.sales.domains.api.IntervalPricingMetadata;
 import com.sales.domains.api.IntervalsPricing;
@@ -51,11 +52,11 @@ public class IntervalsPricingImpl implements IntervalsPricing {
 	}
 
 	@Override
-	public double evaluatePrice(EvaluatingPriceParams params) throws IOException {
+	public double evaluatePrice(int quantity, double reductionAmount, LocalDate orderDate) throws IOException {
 		double price = 0;
 		
 		for (IntervalPricing ip : all()) {
-			price += ip.evaluatePrice(params);
+			price += ip.evaluatePrice(quantity, reductionAmount, orderDate);
 		}
 		
 		return price;
@@ -72,7 +73,7 @@ public class IntervalsPricingImpl implements IntervalsPricing {
 		
 		List<DomainStore> results = ds.getAllByKeyOrdered(dm.pricingIdKey(), pricing.id(), HorodateImpl.dm().dateCreatedKey(), OrderDirection.ASC);
 		for (DomainStore domainStore : results) {
-			values.add(build(domainStore.key())); 
+			values.add(build(UUIDConvert.fromObject(domainStore.key()))); 
 		}		
 		
 		// ranger par ordre croissant des intervalles
@@ -119,7 +120,7 @@ public class IntervalsPricingImpl implements IntervalsPricing {
 	}
 
 	@Override
-	public IntervalPricing build(Object id) throws IOException {
+	public IntervalPricing build(UUID id) throws IOException {
 		return new IntervalPricingImpl(base, id, pricing);
 	}
 

@@ -1,6 +1,7 @@
 package com.sales.domains.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,11 +12,14 @@ import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.common.utilities.convert.UUIDConvert;
 import com.infrastructure.core.HorodateMetadata;
 import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
 import com.infrastructure.datasource.DomainsStore;
+import com.sales.domains.api.InvoiceMetadata;
+import com.sales.domains.api.PaymentMetadata;
 import com.sales.domains.api.PricingMetadata;
 import com.sales.domains.api.PricingMode;
 import com.sales.domains.api.Product;
@@ -68,7 +72,7 @@ public class ProductsImpl implements Products {
 		
 		List<DomainStore> results = ds.findDs(statement, params);
 		for (DomainStore domainStore : results) {
-			values.add(new ProductImpl(this.base, domainStore.key())); 
+			values.add(build(UUIDConvert.fromObject(domainStore.key()))); 
 		}		
 		
 		return values;
@@ -90,10 +94,12 @@ public class ProductsImpl implements Products {
 
 	@Override
 	public Product get(UUID id) throws IOException {
-		if(!ds.exists(id))
+		Product item = build(id);
+		
+		if(!item.isPresent())
 			throw new NotFoundException("Le produit n'a pas été trouvé !");
 		
-		return new ProductImpl(this.base, id);
+		return item;
 	}
 
 	@Override
@@ -131,16 +137,72 @@ public class ProductsImpl implements Products {
 
 	@Override
 	public void delete(Product item) throws IOException {
+		item.taxes().deleteAll();
+		PricingMetadata dm = PricingImpl.dm();
+		DomainsStore pricingDs = base.domainsStore(dm);
+		pricingDs.delete(item.pricing().id());
 		ds.delete(item.id());
 	}
 
 	@Override
-	public boolean contains(Product item) throws IOException {
-		return ds.exists(item.id());
+	public boolean contains(Product item) {
+		try {
+			return ds.exists(item.id());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	@Override
-	public Product build(Object id) {
+	public Product build(UUID id) {
 		return new ProductImpl(base, id);
+	}
+
+	@Override
+	public Product getDownPaymentProduct() throws IOException {
+		return get(UUID.fromString("77c94ca8-9ea5-4e30-a1a3-16650c5e38a2")); 
+	}
+
+	@Override
+	public double turnover(LocalDate start, LocalDate end) throws IOException {
+		PaymentMetadata dm = PaymentMetadata.create();
+		DomainsStore ds = base.domainsStore(dm);
+		
+		String statement = String.format("SELECT SUM(%s) FROM %s "
+										+ "WHERE %s BETWEEN ? AND ?", 
+										dm.paidAmountKey(), dm.domainName(), 
+										dm.paymentDateKey());
+		
+		List<Object> params = new ArrayList<Object>();
+		params.add(java.sql.Date.valueOf(start));
+		params.add(java.sql.Date.valueOf(end));
+		
+		List<Object> results = ds.find(statement, params);
+		return Double.parseDouble(results.get(0) == null ? "0": results.get(0).toString());
+	}
+
+	@Override
+	public double invoicedAmount(LocalDate start, LocalDate end) throws IOException {
+		
+		InvoiceMetadata dm = InvoiceMetadata.create();
+		DomainsStore ds = base.domainsStore(dm);
+		
+		String statement = String.format("SELECT SUM(%s) FROM %s "
+										+ "WHERE %s BETWEEN ? AND ?", 
+										dm.totalAmountTtcKey(), dm.domainName(), 
+										dm.orderDateKey());
+		
+		List<Object> params = new ArrayList<Object>();
+		params.add(java.sql.Date.valueOf(start));
+		params.add(java.sql.Date.valueOf(end));
+		
+		List<Object> results = ds.find(statement, params);
+		return Double.parseDouble(results.get(0) == null ? "0": results.get(0).toString());
+	}
+
+	@Override
+	public double amountInCirculation(LocalDate start, LocalDate end) throws IOException{
+		return invoicedAmount(start, end) - turnover(start, end);
 	}
 }

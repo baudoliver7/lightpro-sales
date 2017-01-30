@@ -59,7 +59,7 @@ public class ProductVm {
 		String description = "";
 		
 		for (Tax tax : origin.taxes().all()) {
-			description += String.format("%s (%d pourcent), ", tax.shortName(), tax.rate());
+			description += String.format("%s (%d %s), ", tax.shortName(), tax.rate(), "%");
 		}
 		
 		return description;

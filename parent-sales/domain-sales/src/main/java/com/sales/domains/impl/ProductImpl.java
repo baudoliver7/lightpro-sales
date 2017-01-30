@@ -1,19 +1,20 @@
 package com.sales.domains.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.common.utilities.convert.UUIDConvert;
 import com.infrastructure.core.Horodate;
 import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
 import com.sales.domains.api.Pricing;
 import com.sales.domains.api.Product;
+import com.sales.domains.api.ProductAmounts;
 import com.sales.domains.api.ProductMetadata;
 import com.sales.domains.api.ProductTaxes;
 import com.securities.api.MesureUnit;
@@ -22,11 +23,11 @@ import com.securities.impl.MesureUnitImpl;
 public class ProductImpl implements Product {
 
 	private final transient Base base;
-	private final transient Object id;
+	private final transient UUID id;
 	private final transient ProductMetadata dm;
 	private final transient DomainStore ds;
 	
-	public ProductImpl(final Base base, final Object id){
+	public ProductImpl(final Base base, final UUID id){
 		this.base = base;
 		this.id = id;
 		this.dm = dm();
@@ -40,12 +41,17 @@ public class ProductImpl implements Product {
 
 	@Override
 	public UUID id() {
-		return UUIDConvert.fromObject(this.id);
+		return this.id;
 	}
 
 	@Override
-	public boolean isPresent() throws IOException {
-		return base.domainsStore(dm).exists(id);
+	public boolean isPresent() {
+		try {
+			return base.domainsStore(dm).exists(id);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	@Override
@@ -101,5 +107,45 @@ public class ProductImpl implements Product {
 	@Override
 	public Pricing pricing() throws IOException {
 		return new PricingImpl(base, id);
+	}
+
+	@Override
+	public ProductAmounts evaluatePrice(int quantity, double unitPrice, double reductionAmount, LocalDate orderDate, boolean withTax) throws IOException {
+		
+		if(unitPrice == 0)
+		{
+			switch (pricing().mode()) {
+			case FIX:
+				unitPrice = pricing().fixPrice();
+				break;
+			case TRANCHE_MONTH_DAYS:
+				unitPrice = pricing().intervals().evaluatePrice(quantity, reductionAmount, orderDate);
+				break;
+			case TRANCHE_SIMPLE:
+				unitPrice = pricing().intervals().evaluatePrice(quantity, reductionAmount, orderDate);
+			default:
+				break;
+			}
+		}		
+		
+		if(unitPrice < reductionAmount)
+			throw new IllegalArgumentException(String.format("Le montant de réduction (%.2f) doit être inférieur au prix unitaire (%.2f) !", reductionAmount, unitPrice));
+		
+		double unitPriceApplied = unitPrice - reductionAmount;
+		double totalAmountHt = unitPriceApplied * quantity;
+		double totalTaxAmount = withTax ? taxes().evaluateTaxAmount(totalAmountHt) : 0;
+		double totalAmountTtc = totalAmountHt + totalTaxAmount;
+		
+		return new ProductAmounts(unitPrice, unitPriceApplied, totalAmountHt, totalTaxAmount, totalAmountTtc);
+	}
+	
+	@Override
+	public boolean isEqual(Product item) {
+		return this.id().equals(item.id());
+	}
+
+	@Override
+	public boolean isNotEqual(Product item) {
+		return !isEqual(item);
 	}
 }

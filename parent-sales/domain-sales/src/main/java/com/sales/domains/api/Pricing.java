@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import com.infrastructure.core.Recordable;
 
-public interface Pricing extends Recordable<UUID> {
+public interface Pricing extends Recordable<UUID, Pricing> {
 	double fixPrice() throws IOException;
 	PricingMode mode() throws IOException;
 	String priceSummary() throws IOException;

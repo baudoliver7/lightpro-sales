@@ -1,10 +1,10 @@
 package com.sales.domains.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import com.sales.domains.api.EvaluatingPriceParams;
 import com.sales.domains.api.IntervalPricing;
 import com.sales.domains.api.IntervalsPricing;
 import com.sales.domains.api.PriceType;
@@ -33,12 +33,12 @@ public class MonthDaysIntervalsPricing implements IntervalsPricing {
 	 * param1 = Jour; param2 = Mois; param3 = Année
 	 */
 	@Override
-	public double evaluatePrice(EvaluatingPriceParams params) throws IOException {
+	public double evaluatePrice(int quantity, double reductionAmount, LocalDate orderDate) throws IOException {
 		
 		double price = 0;
 		
 		for (IntervalPricing ip : all()) {
-			price += ip.evaluatePrice(params);
+			price += ip.evaluatePrice(quantity, reductionAmount, orderDate);
 		}
 		
 		return price;
@@ -73,7 +73,7 @@ public class MonthDaysIntervalsPricing implements IntervalsPricing {
 	}
 
 	@Override
-	public IntervalPricing build(Object id) throws IOException {
+	public IntervalPricing build(UUID id) throws IOException {
 		return new MonthDaysIntervalPricing(origin.build(id));
 	}
 

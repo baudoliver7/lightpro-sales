@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.common.utilities.convert.UUIDConvert;
 import com.infrastructure.core.HorodateMetadata;
 import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
@@ -21,11 +22,11 @@ import com.securities.impl.TaxImpl;
 public class ProductTaxesImpl implements ProductTaxes {
 
 	private final transient Base base;
-	private final transient Object productId;
+	private final transient UUID productId;
 	private final transient ProductTaxMetadata dm;
 	private final transient DomainsStore ds;
 	
-	public ProductTaxesImpl(final Base base, Object productId){
+	public ProductTaxesImpl(final Base base, UUID productId){
 		this.base = base;
 		this.dm = new ProductTaxMetadata();
 		this.ds = base.domainsStore(dm);
@@ -44,7 +45,7 @@ public class ProductTaxesImpl implements ProductTaxes {
 		
 		List<DomainStore> results = ds.findDs(statement, params);
 		for (DomainStore domainStore : results) {
-			values.add(new TaxImpl(this.base, domainStore.key())); 
+			values.add(new TaxImpl(this.base, UUIDConvert.fromObject(domainStore.key()))); 
 		}		
 		
 		return values;
@@ -80,5 +81,23 @@ public class ProductTaxesImpl implements ProductTaxes {
 			return null;
 		else
 			return results.get(0);
+	}
+
+	@Override
+	public double evaluateTaxAmount(double amountHt) throws IOException {
+		double taxAmount = 0;
+		
+		for (Tax tax : all()) {
+			taxAmount += tax.evaluateAmount(amountHt);
+		}
+		
+		return taxAmount;
+	}
+
+	@Override
+	public void deleteAll() throws IOException {
+		for (Tax tax : all()) {
+			delete(tax);
+		}
 	}
 }

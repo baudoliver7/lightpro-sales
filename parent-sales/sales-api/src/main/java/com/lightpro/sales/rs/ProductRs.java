@@ -1,6 +1,8 @@
 package com.lightpro.sales.rs;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,20 +20,26 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.infrastructure.core.PaginationSet;
 import com.lightpro.sales.cmd.IntervalPricingEdited;
 import com.lightpro.sales.cmd.PricingEdited;
+import com.lightpro.sales.cmd.ProductAmountsCmd;
 import com.lightpro.sales.cmd.ProductEdited;
 import com.lightpro.sales.vm.PriceTypeVm;
 import com.lightpro.sales.vm.PricingModeVm;
 import com.lightpro.sales.vm.PricingVm;
+import com.lightpro.sales.vm.ProductAmountsVm;
 import com.lightpro.sales.vm.ProductVm;
+import com.lightpro.sales.vm.ResumeSalesVm;
 import com.lightpro.sales.vm.TaxVm;
 import com.sales.domains.api.IntervalPricing;
 import com.sales.domains.api.PriceType;
 import com.sales.domains.api.Pricing;
 import com.sales.domains.api.PricingMode;
 import com.sales.domains.api.Product;
+import com.sales.domains.api.ProductAmounts;
 import com.sales.domains.api.Products;
 import com.securities.api.MesureUnit;
 import com.securities.api.Tax;
@@ -74,6 +82,36 @@ public class ProductRs extends SalesBaseRs {
 											 		 .collect(Collectors.toList());
 
 						return Response.ok(items).build();
+					}
+				});			
+	}
+	
+	@GET
+	@Path("/resume-sales")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response getResumeSales(@QueryParam("start") String startStr, @QueryParam("end") String endStr) throws IOException {	
+		
+		return createHttpResponse(
+				new Callable<Response>(){
+					@Override
+					public Response call() throws IOException {
+						
+						if(StringUtils.isBlank(startStr) || StringUtils.isBlank(endStr) )
+							throw new IllegalArgumentException("Vous devez renseigner une période !");
+						
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+						
+						LocalDate start = LocalDate.parse(startStr, formatter);
+						LocalDate end = LocalDate.parse(endStr, formatter);
+						
+						Products products = sales().products();
+						
+						ResumeSalesVm item = new ResumeSalesVm(
+													products.invoicedAmount(start, end),
+													products.turnover(start, end),
+													products.amountInCirculation(start, end));
+
+						return Response.ok(item).build();
 					}
 				});			
 	}
@@ -249,6 +287,24 @@ public class ProductRs extends SalesBaseRs {
 						}
 						
 						return Response.status(Response.Status.OK).build();
+					}
+				});		
+	}
+	
+	@POST
+	@Path("/{id}/calculate-amount")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response add(@PathParam("id") final UUID id, final ProductAmountsCmd cmd) throws IOException {
+		
+		return createNonTransactionalHttpResponse(
+				new Callable<Response>(){
+					@Override
+					public Response call() throws IOException {
+						
+						Product product = sales().products().get(id);
+						ProductAmounts amounts = product.evaluatePrice(cmd.quantity(), 0, cmd.reductionAmount(), cmd.orderDate(), true);
+						
+						return Response.ok(new ProductAmountsVm(amounts)).build();
 					}
 				});		
 	}

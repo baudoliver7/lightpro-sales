@@ -108,12 +108,10 @@
   </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_9EOaENqHEeauDZ8cCIckYw" name="PurchaseOrder">
     <generalization xmi:id="_rtKDwNqLEeauDZ8cCIckYw" general="_eU6e0NpgEeauDZ8cCIckYw"/>
-    <ownedOperation xmi:id="_b9l68NqIEeauDZ8cCIckYw" name="deliveryDate"/>
     <ownedOperation xmi:id="__sBGQNqIEeauDZ8cCIckYw" name="status"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Interface" xmi:id="_TcWdMNqJEeauDZ8cCIckYw" name="Invoice">
     <generalization xmi:id="_vn1woNqLEeauDZ8cCIckYw" general="_eU6e0NpgEeauDZ8cCIckYw"/>
-    <ownedOperation xmi:id="_u_wSYNqKEeauDZ8cCIckYw" name="invoiceDate"/>
     <ownedOperation xmi:id="_zVMeENqJEeauDZ8cCIckYw" name="status"/>
     <ownedOperation xmi:id="_jN0DcNqMEeauDZ8cCIckYw" name="leftAmountToPay"/>
     <ownedOperation xmi:id="__hslQNqLEeauDZ8cCIckYw" name="totalAmountPaid"/>

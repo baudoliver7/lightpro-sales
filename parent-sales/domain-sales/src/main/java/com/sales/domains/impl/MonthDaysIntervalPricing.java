@@ -1,11 +1,11 @@
 package com.sales.domains.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.UUID;
 
 import com.infrastructure.core.Horodate;
-import com.sales.domains.api.EvaluatingPriceParams;
 import com.sales.domains.api.IntervalPricing;
 import com.sales.domains.api.IntervalPricingMetadata;
 import com.sales.domains.api.PriceType;
@@ -31,7 +31,7 @@ public class MonthDaysIntervalPricing implements IntervalPricing {
 	}
 
 	@Override
-	public boolean isPresent() throws IOException {
+	public boolean isPresent() {
 		return origin.isPresent();
 	}
 
@@ -80,9 +80,9 @@ public class MonthDaysIntervalPricing implements IntervalPricing {
 	}
 
 	@Override
-	public double evaluatePrice(EvaluatingPriceParams params) throws IOException {		
+	public double evaluatePrice(int quantity, double reductionAmount, LocalDate orderDate) throws IOException {		
 		
-		if(!(begin() >= params.param1() && end() <= params.param1())) // n'est pas compris dans l'intervalle
+		if(!(begin() <= orderDate.getDayOfMonth() && orderDate.getDayOfMonth() <= end())) // n'est pas compris dans l'intervalle
 			return 0;
 		
 		double price = 0;
@@ -91,7 +91,7 @@ public class MonthDaysIntervalPricing implements IntervalPricing {
 		int begin = begin();
 		
 		if(end == 30) // fin du mois 
-			end = numberOfDayInMonths(params.param3(), params.param2());
+			end = numberOfDayInMonths(orderDate.getMonthValue(), orderDate.getYear());
 		
 		int count = end - begin + 1;
 		
@@ -103,7 +103,7 @@ public class MonthDaysIntervalPricing implements IntervalPricing {
 				price = price() * count;
 				break;
 			case PRORATA_PRICE:
-				price = (price() / numberOfDayInMonths(params.param3(), params.param2())) * (end - params.param1() + 1);
+				price = (price() / numberOfDayInMonths(orderDate.getMonthValue(), orderDate.getYear())) * (end - orderDate.getDayOfMonth() + 1);
 				break;
 			default:
 				break;
@@ -115,5 +115,15 @@ public class MonthDaysIntervalPricing implements IntervalPricing {
 	private static int numberOfDayInMonths(int month, int year){
 		YearMonth yearMonthObject = YearMonth.of(year, month);
 		return yearMonthObject.lengthOfMonth();
+	}
+	
+	@Override
+	public boolean isEqual(IntervalPricing item) {
+		return this.id().equals(item.id());
+	}
+
+	@Override
+	public boolean isNotEqual(IntervalPricing item) {
+		return !isEqual(item);
 	}
 }

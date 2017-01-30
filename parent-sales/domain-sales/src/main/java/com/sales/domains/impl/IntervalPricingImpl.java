@@ -1,16 +1,15 @@
 package com.sales.domains.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import com.common.utilities.convert.UUIDConvert;
 import com.infrastructure.core.Horodate;
 import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
-import com.sales.domains.api.EvaluatingPriceParams;
 import com.sales.domains.api.IntervalPricing;
 import com.sales.domains.api.IntervalPricingMetadata;
 import com.sales.domains.api.PriceType;
@@ -19,12 +18,12 @@ import com.sales.domains.api.Pricing;
 public class IntervalPricingImpl implements IntervalPricing {
 	
 	private final transient Base base;
-	private final transient Object id;
+	private final transient UUID id;
 	private final transient Pricing pricing;
 	private final transient IntervalPricingMetadata dm;
 	private final transient DomainStore ds;	
 	
-	public IntervalPricingImpl(final Base base, final Object id, final Pricing pricing){
+	public IntervalPricingImpl(final Base base, final UUID id, final Pricing pricing){
 		this.base = base;
 		this.id = id;
 		this.dm = dm();
@@ -39,12 +38,17 @@ public class IntervalPricingImpl implements IntervalPricing {
 
 	@Override
 	public UUID id() {
-		return UUIDConvert.fromObject(this.id);
+		return this.id;
 	}
 
 	@Override
-	public boolean isPresent() throws IOException {
-		return base.domainsStore(dm).exists(id);
+	public boolean isPresent() {
+		try {
+			return base.domainsStore(dm).exists(id);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	@Override
@@ -91,32 +95,42 @@ public class IntervalPricingImpl implements IntervalPricing {
 	}
 
 	@Override
-	public double evaluatePrice(EvaluatingPriceParams params) throws IOException {
+	public double evaluatePrice(int quantity, double reductionAmount, LocalDate orderDate) throws IOException {
 		
-		if(params.param1() == 0)
+		if(quantity == 0)
 			return 0;
 		
 		double price = 0;
-		int count = params.param1() <= end() ? count() : params.param1() - begin() + 1;
+		int count = quantity <= end() ? count() : quantity - begin() + 1;
 		
 		switch (priceType()) {
 			case TRANCHE_PRICE:
-				if(begin() >= params.param1() && end() <= params.param1()) // est compris dans l'intervalle
+				if(begin() >= quantity && end() <= quantity) // est compris dans l'intervalle
 					price = price();
 				break;
 			case UNIT_PRICE:	
-				if(begin() >= params.param1())
+				if(begin() >= quantity)
 				{				
 					price = count * price();
 				}
 				break;
 			case PRORATA_PRICE:
-				price = (price() / params.param1()) * count;
+				price = (price() / quantity) * count;
 				break;
 			default:
 				break;
 		}
 		
 		return price;
+	}
+
+	@Override
+	public boolean isEqual(IntervalPricing item) {
+		return this.id().equals(item.id());
+	}
+
+	@Override
+	public boolean isNotEqual(IntervalPricing item) {
+		return !isEqual(item);
 	}
 }
