@@ -3,10 +3,7 @@ package com.sales.domains.impl;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.ws.rs.NotFoundException;
@@ -23,22 +20,20 @@ import com.sales.domains.api.PurchaseOrder;
 import com.sales.domains.api.PurchaseOrderMetadata;
 import com.sales.domains.api.PurchaseOrderStatus;
 import com.sales.domains.api.PurchaseOrders;
-import com.securities.api.Sequence;
-import com.securities.api.Sequence.SequenceReserved;
-import com.securities.api.SequenceMetadata;
 import com.securities.api.User;
-import com.securities.impl.SequenceImpl;
 
 public class QuotationsImpl implements PurchaseOrders {
 
 	private transient final Base base;
 	private final transient PurchaseOrderMetadata dm;
 	private final transient DomainsStore ds;
+	private final transient Orders origin;
 	
 	public QuotationsImpl(final Base base){
 		this.base = base;
 		this.dm = PurchaseOrderMetadata.create();
-		this.ds = this.base.domainsStore(this.dm);	
+		this.ds = this.base.domainsStore(this.dm);			
+		this.origin = new Orders(base);
 	}
 	
 	@Override
@@ -48,7 +43,7 @@ public class QuotationsImpl implements PurchaseOrders {
 
 	@Override
 	public PurchaseOrder build(UUID id) {
-		return new PurchaseOrderImpl(base, id);
+		return origin.build(id); 
 	}
 
 	@Override
@@ -119,52 +114,11 @@ public class QuotationsImpl implements PurchaseOrders {
 
 	@Override
 	public void delete(PurchaseOrder item) throws IOException {
-		item.products().deleteAll();
-		ds.delete(item.id());
+		origin.delete(item);		
 	}
 
 	@Override
-	public PurchaseOrder add(LocalDate date, LocalDate expirationDate, PaymentConditionStatus paymentCondition, String cgv, String notes, Customer customer, User seller) throws IOException {
-		
-		if (date == null)
-            throw new IllegalArgumentException("Invalid date : it can't be empty!");
-		
-		if (expirationDate == null)
-            throw new IllegalArgumentException("Invalid expiration date : it can't be empty!");
-		
-		if (!customer.isPresent())
-			customer = new CustomersImpl(base).get(UUIDConvert.fromObject("7a4c8230-2df3-4668-8c62-fe98776d37a9"));		
-		
-		if (!seller.isPresent())
-            throw new IllegalArgumentException("Invalid seller : it can't be empty!");
-		
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put(dm.orderDateKey(), java.sql.Date.valueOf(date));	
-		params.put(dm.expirationDateKey(), java.sql.Date.valueOf(expirationDate));	
-		params.put(dm.paymentConditionIdKey(), paymentCondition.id());
-		params.put(dm.cgvKey(), cgv);
-		params.put(dm.notesKey(), notes);
-		params.put(dm.customerIdKey(), customer.id());
-		params.put(dm.sellerIdKey(), seller.id());
-		params.put(dm.statusIdKey(), PurchaseOrderStatus.DRAFT.id());	
-		params.put(dm.referenceKey(), sequence().generate());
-		
-		UUID id = UUID.randomUUID();
-		ds.set(id, params);	
-		
-		return build(id);
-	}
-
-	private Sequence sequence() throws IOException{
-		SequenceMetadata dm = SequenceImpl.dm();
-		DomainsStore ds = base.domainsStore(dm);
-	
-		SequenceReserved code = SequenceReserved.PURCHASE_ORDER;		
-		List<Object> values = ds.find(String.format("SELECT %s FROM %s WHERE %s=?", dm.keyName(), dm.domainName(), dm.codeIdKey()), Arrays.asList(code.id()));
-		
-		if(values.isEmpty())
-			throw new IllegalArgumentException(String.format("Vous devez configurer la séquence de %s !", code.toString()));
-		
-		return new SequenceImpl(base, UUIDConvert.fromObject(values.get(0)));
+	public PurchaseOrder add(LocalDate date, LocalDate expirationDate, PaymentConditionStatus paymentCondition, String cgv, String notes, Customer customer, User seller) throws IOException {		
+		return origin.add(date, expirationDate, paymentCondition, cgv, notes, customer, seller);
 	}
 }
