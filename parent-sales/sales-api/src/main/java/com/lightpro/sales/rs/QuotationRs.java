@@ -150,7 +150,7 @@ public class QuotationRs extends SalesBaseRs {
 					public Response call() throws Exception {
 						
 						PurchaseOrders containers = sales().quotations();
-						Customer customer = sales().customers().get(cmd.customerId());
+						Customer customer = sales().customers().build(cmd.customerId()); // peut ne pas être spécifié (prendre le Client inconnu par défaut)
 						User seller = sales().membership().get(cmd.sellerId());
 						PurchaseOrder item = containers.add(cmd.orderDate(), cmd.expirationDate(), cmd.paymentCondition(), cmd.cgv(), cmd.notes(), customer, seller);
 						

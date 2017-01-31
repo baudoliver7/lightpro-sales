@@ -133,7 +133,7 @@ public class QuotationsImpl implements PurchaseOrders {
             throw new IllegalArgumentException("Invalid expiration date : it can't be empty!");
 		
 		if (!customer.isPresent())
-            throw new IllegalArgumentException("Invalid customer : it can't be empty!");
+			customer = new CustomersImpl(base).get(UUIDConvert.fromObject("7a4c8230-2df3-4668-8c62-fe98776d37a9"));		
 		
 		if (!seller.isPresent())
             throw new IllegalArgumentException("Invalid seller : it can't be empty!");

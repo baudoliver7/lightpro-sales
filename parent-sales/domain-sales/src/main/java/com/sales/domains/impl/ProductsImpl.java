@@ -146,12 +146,7 @@ public class ProductsImpl implements Products {
 
 	@Override
 	public boolean contains(Product item) {
-		try {
-			return ds.exists(item.id());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
+		return ds.exists(item.id());
 	}
 
 	@Override

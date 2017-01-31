@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.common.utilities.convert.UUIDConvert;
 import com.infrastructure.core.Horodate;
 import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
@@ -101,12 +102,7 @@ public class PurchaseOrderImpl implements PurchaseOrder {
 
 	@Override
 	public boolean isPresent() {
-		try {
-			return base.domainsStore(dm).exists(id);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
+		return base.domainsStore(dm).exists(id);
 	}
 
 	@Override
@@ -190,7 +186,7 @@ public class PurchaseOrderImpl implements PurchaseOrder {
             throw new IllegalArgumentException("Invalid expiration date : it can't be empty!");
 		
 		if (!customer.isPresent())
-            throw new IllegalArgumentException("Invalid customer : it can't be empty!");
+            customer = new CustomersImpl(base).get(UUIDConvert.fromObject("7a4c8230-2df3-4668-8c62-fe98776d37a9"));		
 		
 		if (!seller.isPresent())
             throw new IllegalArgumentException("Invalid seller : it can't be empty!");

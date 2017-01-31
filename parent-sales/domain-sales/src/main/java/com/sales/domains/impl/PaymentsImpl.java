@@ -101,12 +101,7 @@ public class PaymentsImpl implements Payments {
 
 	@Override
 	public boolean contains(Payment item) {
-		try {
-			return ds.exists(item.id());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
+		return ds.exists(item.id());
 	}
 
 	@Override

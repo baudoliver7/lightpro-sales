@@ -89,12 +89,7 @@ public class InvoiceImpl implements Invoice {
 
 	@Override
 	public boolean isPresent() {
-		try {
-			return base.domainsStore(dm).exists(id);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
+		return base.domainsStore(dm).exists(id);
 	}
 
 	@Override

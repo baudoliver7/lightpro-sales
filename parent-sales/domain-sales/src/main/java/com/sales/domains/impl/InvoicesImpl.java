@@ -47,12 +47,7 @@ public class InvoicesImpl implements Invoices {
 
 	@Override
 	public boolean contains(Invoice item) {
-		try {
-			return ds.exists(item.id());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
+		return ds.exists(item.id());
 	}
 
 	@Override
