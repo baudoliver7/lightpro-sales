@@ -12,6 +12,7 @@ import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
 import com.sales.domains.api.Customer;
+import com.sales.domains.api.Customers;
 import com.sales.domains.api.Order;
 import com.sales.domains.api.OrderProduct;
 import com.sales.domains.api.OrderProducts;
@@ -20,6 +21,7 @@ import com.sales.domains.api.PurchaseOrder;
 import com.sales.domains.api.PurchaseOrderInvoices;
 import com.sales.domains.api.PurchaseOrderMetadata;
 import com.sales.domains.api.PurchaseOrderStatus;
+import com.securities.api.Person;
 import com.securities.api.User;
 import com.securities.impl.UserImpl;
 
@@ -185,8 +187,16 @@ public class PurchaseOrderImpl implements PurchaseOrder {
 		if (expirationDate == null)
             throw new IllegalArgumentException("Invalid expiration date : it can't be empty!");
 		
-		if (!customer.isPresent())
-            customer = new CustomersImpl(base).get(UUIDConvert.fromObject("7a4c8230-2df3-4668-8c62-fe98776d37a9"));		
+		if (!customer.isPresent()){
+			Person person = customer;
+			
+			Customers customers = new CustomersImpl(base);
+			if(person.isPresent()){
+				customers.add(person);
+			}else{
+				customer = customers.get(UUIDConvert.fromObject("7a4c8230-2df3-4668-8c62-fe98776d37a9")); // mettre un client par défaut
+			}			
+		}	
 		
 		if (!seller.isPresent())
             throw new IllegalArgumentException("Invalid seller : it can't be empty!");
