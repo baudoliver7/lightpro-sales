@@ -111,9 +111,7 @@ public class CustomersImpl implements Customers {
 	@Override
 	public Customer add(String firstName, String lastName, Sex sex, String address, Date birthDate, String tel1, String tel2, String email, String photo) throws IOException {
 		Person person = persons.add(firstName, lastName, sex, address, birthDate, tel1, tel2, email, photo);		
-		ds.set(person.id(), new HashMap<String, Object>());
-		
-		return build(person.id());
+		return add(person);
 	}
 
 	@Override
@@ -130,5 +128,11 @@ public class CustomersImpl implements Customers {
 			throw new NotFoundException("Le client n'a pas été trouvé !");
 		
 		return item;
+	}
+
+	@Override
+	public Customer add(Person person) throws IOException {
+		ds.set(person.id(), new HashMap<String, Object>());		
+		return build(person.id());
 	}
 }
