@@ -23,11 +23,13 @@ import com.lightpro.sales.vm.PaymentVm;
 import com.sales.domains.api.Payment;
 import com.sales.domains.api.PaymentMode;
 import com.sales.domains.api.Payments;
+import com.securities.api.Secured;
 
 @Path("/sales/payment")
 public class PaymentRs extends SalesBaseRs {
 	
 	@GET
+	@Secured
 	@Path("/search")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response search( @QueryParam("page") int page, 
@@ -55,6 +57,7 @@ public class PaymentRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSingle(@PathParam("id") UUID id) throws IOException {	
@@ -72,6 +75,7 @@ public class PaymentRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/mode")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getPaymentModes() throws IOException {	
@@ -93,6 +97,7 @@ public class PaymentRs extends SalesBaseRs {
 	}
 	
 	@PUT
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response update(@PathParam("id") final UUID id, final PaymentEdited cmd) throws IOException {

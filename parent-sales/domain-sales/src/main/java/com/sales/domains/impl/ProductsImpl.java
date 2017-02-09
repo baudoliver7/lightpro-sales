@@ -3,6 +3,7 @@ package com.sales.domains.impl;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import com.sales.domains.api.PricingMode;
 import com.sales.domains.api.Product;
 import com.sales.domains.api.ProductMetadata;
 import com.sales.domains.api.Products;
+import com.sales.domains.api.Sales;
 import com.securities.api.MesureUnit;
 
 public class ProductsImpl implements Products {
@@ -32,11 +34,13 @@ public class ProductsImpl implements Products {
 	private transient final Base base;
 	private final transient ProductMetadata dm;
 	private final transient DomainsStore ds;
+	private final transient Sales module;
 	
-	public ProductsImpl(final Base base){
+	public ProductsImpl(final Base base, final Sales module){
 		this.base = base;
 		this.dm = ProductImpl.dm();
 		this.ds = this.base.domainsStore(this.dm);	
+		this.module = module;
 	}
 	
 	@Override
@@ -54,13 +58,19 @@ public class ProductsImpl implements Products {
 		List<Product> values = new ArrayList<Product>();
 		
 		HorodateMetadata hm = HorodateImpl.dm();
-		String statement = String.format("SELECT %s FROM %s WHERE %s ILIKE ? OR %s ILIKE ? OR %s ILIKE ? ORDER BY %s DESC LIMIT ? OFFSET ?", dm.keyName(), dm.domainName(), dm.nameKey(), dm.barCodeKey(), dm.descriptionKey(), hm.dateCreatedKey());
+		String statement = String.format("SELECT %s FROM %s "
+				+ "WHERE (%s ILIKE ? OR %s ILIKE ? OR %s ILIKE ?) AND %s=? "
+				+ "ORDER BY %s DESC LIMIT ? OFFSET ?", 
+				dm.keyName(), dm.domainName(), 
+				dm.nameKey(), dm.barCodeKey(), dm.descriptionKey(), dm.moduleIdKey(),
+				hm.dateCreatedKey());
 		
 		List<Object> params = new ArrayList<Object>();
 		filter = (filter == null) ? "" : filter;
 		params.add("%" + filter + "%");
 		params.add("%" + filter + "%");
 		params.add("%" + filter + "%");
+		params.add(module.id());
 		
 		if(pageSize > 0){
 			params.add(pageSize);
@@ -80,13 +90,17 @@ public class ProductsImpl implements Products {
 
 	@Override
 	public int totalCount(String filter) throws IOException {
-		String statement = String.format("SELECT COUNT(%s) FROM %s WHERE %s ILIKE ? OR %s ILIKE ? OR %s ILIKE ?", dm.keyName(), dm.domainName(), dm.nameKey(), dm.barCodeKey(), dm.descriptionKey());
+		String statement = String.format("SELECT COUNT(%s) FROM %s "
+				+ "WHERE (%s ILIKE ? OR %s ILIKE ? OR %s ILIKE ?) AND %s=? ",
+				dm.keyName(), dm.domainName(), 
+				dm.nameKey(), dm.barCodeKey(), dm.descriptionKey(), dm.moduleIdKey());
 		
 		List<Object> params = new ArrayList<Object>();
 		filter = (filter == null) ? "" : filter;
 		params.add("%" + filter + "%");
 		params.add("%" + filter + "%");
 		params.add("%" + filter + "%");
+		params.add(module.id());
 		
 		List<Object> results = ds.find(statement, params);
 		return Integer.parseInt(results.get(0).toString());	
@@ -96,7 +110,7 @@ public class ProductsImpl implements Products {
 	public Product get(UUID id) throws IOException {
 		Product item = build(id);
 		
-		if(!item.isPresent())
+		if(!contains(item))
 			throw new NotFoundException("Le produit n'a pas été trouvé !");
 		
 		return item;
@@ -118,6 +132,7 @@ public class ProductsImpl implements Products {
 		params.put(dm.descriptionKey(), description);
 		params.put(dm.mesureUnitIdKey(), unit.id());
 		params.put(dm.barCodeKey(), barCode);
+		params.put(dm.moduleIdKey(), module.id());
 		
 		UUID id = UUID.randomUUID();
 		ds.set(id, params);
@@ -137,16 +152,23 @@ public class ProductsImpl implements Products {
 
 	@Override
 	public void delete(Product item) throws IOException {
-		item.taxes().deleteAll();
-		PricingMetadata dm = PricingImpl.dm();
-		DomainsStore pricingDs = base.domainsStore(dm);
-		pricingDs.delete(item.pricing().id());
-		ds.delete(item.id());
+		if(contains(item)){
+			item.taxes().deleteAll();
+			PricingMetadata dm = PricingImpl.dm();
+			DomainsStore pricingDs = base.domainsStore(dm);
+			pricingDs.delete(item.pricing().id());
+			ds.delete(item.id());
+		}		
 	}
 
 	@Override
 	public boolean contains(Product item) {
-		return ds.exists(item.id());
+		try {
+			return item.isPresent() && item.module().isEqual(module);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	@Override
@@ -156,7 +178,15 @@ public class ProductsImpl implements Products {
 
 	@Override
 	public Product getDownPaymentProduct() throws IOException {
-		return get(UUID.fromString("77c94ca8-9ea5-4e30-a1a3-16650c5e38a2")); 
+		
+		String statement = String.format("SELECT %s FROM %s WHERE %s=? AND %s=?", dm.keyName(), dm.domainName(), dm.barCodeKey(), dm.moduleIdKey());
+		
+		List<Object> values = ds.find(statement, Arrays.asList("ACPT", module.id()));
+		if(values.isEmpty()) {
+			return add("Acompte", "ACPT", "", module.mesureUnits().items().get(0));
+		}
+		
+		return get(UUIDConvert.fromObject(values.get(0)));
 	}
 
 	@Override

@@ -41,5 +41,9 @@ public class ProductMetadata implements DomainMetadata {
 	
 	public String mesureUnitIdKey(){
 		return "mesureunitid";
-	}		
+	}	
+	
+	public String moduleIdKey(){
+		return "moduleid";
+	}	
 }

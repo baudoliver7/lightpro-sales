@@ -14,6 +14,7 @@ public interface Product extends Recordable<UUID, Product> {
 	MesureUnit unit() throws IOException;
 	ProductTaxes taxes() throws IOException;
 	Pricing pricing() throws IOException;	
+	Sales module() throws IOException;
 	
 	void update(String name, String barCode, String description, MesureUnit unit) throws IOException;
 	ProductAmounts evaluatePrice(int quantity, double unitPrice, double reductionAmount, LocalDate orderDate, boolean withTax) throws IOException;

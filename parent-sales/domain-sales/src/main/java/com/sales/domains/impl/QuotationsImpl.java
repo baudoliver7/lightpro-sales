@@ -20,6 +20,7 @@ import com.sales.domains.api.PurchaseOrder;
 import com.sales.domains.api.PurchaseOrderMetadata;
 import com.sales.domains.api.PurchaseOrderStatus;
 import com.sales.domains.api.PurchaseOrders;
+import com.sales.domains.api.Sales;
 import com.securities.api.User;
 
 public class QuotationsImpl implements PurchaseOrders {
@@ -28,12 +29,14 @@ public class QuotationsImpl implements PurchaseOrders {
 	private final transient PurchaseOrderMetadata dm;
 	private final transient DomainsStore ds;
 	private final transient Orders origin;
+	private final transient Sales module;
 	
-	public QuotationsImpl(final Base base){
+	public QuotationsImpl(final Base base, final Sales module){
 		this.base = base;
 		this.dm = PurchaseOrderMetadata.create();
-		this.ds = this.base.domainsStore(this.dm);			
-		this.origin = new Orders(base);
+		this.ds = this.base.domainsStore(this.dm);
+		this.module = module;
+		this.origin = new Orders(base, module);
 	}
 	
 	@Override
@@ -49,9 +52,9 @@ public class QuotationsImpl implements PurchaseOrders {
 	@Override
 	public boolean contains(PurchaseOrder item) {
 		try {
-			return item.isPresent() && item.status().id() < PurchaseOrderStatus.COMMANDE_CLIENT.id();
+			return item.isPresent() && item.status().id() < PurchaseOrderStatus.COMMANDE_CLIENT.id() && item.module().isEqual(module);
 		} catch (IOException e) {
-			e.printStackTrace();
+			e.printStackTrace();			
 		}
 		return false;
 	}
@@ -66,12 +69,13 @@ public class QuotationsImpl implements PurchaseOrders {
 		List<PurchaseOrder> values = new ArrayList<PurchaseOrder>();
 		
 		HorodateMetadata hm = HorodateImpl.dm();
-		String statement = String.format("SELECT %s FROM %s WHERE %s ILIKE ? AND %s<? ORDER BY %s DESC LIMIT ? OFFSET ?", dm.keyName(), dm.domainName(), dm.referenceKey(), dm.statusIdKey(), hm.dateCreatedKey());
+		String statement = String.format("SELECT %s FROM %s WHERE (%s ILIKE ? AND %s<?) AND %s=? ORDER BY %s DESC LIMIT ? OFFSET ?", dm.keyName(), dm.domainName(), dm.referenceKey(), dm.statusIdKey(), dm.moduleIdKey(), hm.dateCreatedKey());
 		
 		List<Object> params = new ArrayList<Object>();
 		filter = (filter == null) ? "" : filter;
 		params.add("%" + filter + "%");
 		params.add(PurchaseOrderStatus.COMMANDE_CLIENT.id());
+		params.add(module.id());
 		
 		if(pageSize > 0){
 			params.add(pageSize);
@@ -91,12 +95,13 @@ public class QuotationsImpl implements PurchaseOrders {
 
 	@Override
 	public int totalCount(String filter) throws IOException {
-		String statement = String.format("SELECT COUNT(%s) FROM %s WHERE %s ILIKE ? AND %s<?", dm.keyName(), dm.domainName(), dm.referenceKey(), dm.statusIdKey());
+		String statement = String.format("SELECT COUNT(%s) FROM %s WHERE (%s ILIKE ? AND %s<?) AND %s=?", dm.keyName(), dm.domainName(), dm.referenceKey(), dm.statusIdKey(), dm.moduleIdKey());
 		
 		List<Object> params = new ArrayList<Object>();
 		filter = (filter == null) ? "" : filter;
 		params.add("%" + filter + "%");
 		params.add(PurchaseOrderStatus.COMMANDE_CLIENT.id());
+		params.add(module.id());
 		
 		List<Object> results = ds.find(statement, params);
 		return Integer.parseInt(results.get(0).toString());	
@@ -114,7 +119,8 @@ public class QuotationsImpl implements PurchaseOrders {
 
 	@Override
 	public void delete(PurchaseOrder item) throws IOException {
-		origin.delete(item);		
+		if(contains(item))
+			origin.delete(item);		
 	}
 
 	@Override

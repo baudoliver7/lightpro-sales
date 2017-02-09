@@ -1,8 +1,8 @@
 package com.sales.domains.impl;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -14,10 +14,10 @@ import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
 import com.infrastructure.datasource.DomainsStore;
-import com.infrastructure.datasource.Base.OrderDirection;
 import com.sales.domains.api.Customer;
 import com.sales.domains.api.CustomerMetadata;
 import com.sales.domains.api.Customers;
+import com.securities.api.Company;
 import com.securities.api.Person;
 import com.securities.api.PersonMetadata;
 import com.securities.api.Persons;
@@ -31,24 +31,19 @@ public class CustomersImpl implements Customers {
 	private final transient CustomerMetadata dm;
 	private final transient DomainsStore ds;
 	private final transient Persons persons;
+	private final transient Company company;
 	
-	public CustomersImpl(final Base base){
+	public CustomersImpl(final Base base, final Company company){
 		this.base = base;		
 		this.dm = CustomerMetadata.create();
 		this.ds = base.domainsStore(dm);
-		persons = new PersonsImpl(base);
+		this.company = company;
+		this.persons = new PersonsImpl(base, company);
 	}
 	
 	@Override
 	public List<Customer> all() throws IOException {
-		List<Customer> values = new ArrayList<Customer>();
-		
-		List<DomainStore> results = ds.getAllOrdered(PersonImpl.dm().lastNameKey(), OrderDirection.ASC);
-		for (DomainStore domainStore : results) {
-			values.add(build(UUIDConvert.fromObject(domainStore.key()))); 
-		}		
-		
-		return values;
+		return find(0, 0, "");
 	}
 
 	@Override
@@ -58,7 +53,7 @@ public class CustomersImpl implements Customers {
 
 	@Override
 	public boolean contains(Customer item) {
-		return ds.exists(item.id());
+		return item.isPresent() && persons.contains(item);
 	}
 
 	@Override
@@ -71,12 +66,18 @@ public class CustomersImpl implements Customers {
 		List<Customer> values = new ArrayList<Customer>();
 		
 		PersonMetadata personDm = PersonImpl.dm();
-		String statement = String.format("SELECT %s FROM %s WHERE %s IN (SELECT %s FROM %s WHERE concat(%s,' ', %s) ILIKE ?  OR concat(%s, ' ', %s) ILIKE ?) ORDER BY %s DESC LIMIT ? OFFSET ?", dm.keyName(), dm.domainName(), dm.keyName(), personDm.keyName(), personDm.domainName(), personDm.firstNameKey(), personDm.lastNameKey(), personDm.lastNameKey(), personDm.firstNameKey(), HorodateImpl.dm().dateCreatedKey());
+		String statement = String.format("SELECT %s FROM %s "
+				+ "WHERE %s IN (SELECT %s FROM %s WHERE (concat(%s,' ', %s) ILIKE ?  OR concat(%s, ' ', %s) ILIKE ?) AND %s=?) "
+				+ "ORDER BY %s DESC LIMIT ? OFFSET ?", 
+				dm.keyName(), dm.domainName(), 
+				dm.keyName(), personDm.keyName(), personDm.domainName(), personDm.firstNameKey(), personDm.lastNameKey(), personDm.lastNameKey(), personDm.firstNameKey(), personDm.companyIdKey(), 
+				HorodateImpl.dm().dateCreatedKey());
 		
 		List<Object> params = new ArrayList<Object>();
 		filter = (filter == null) ? "" : filter;
 		params.add("%" + filter + "%");
 		params.add("%" + filter + "%");
+		params.add(company.id());
 		
 		if(pageSize > 0){
 			params.add(pageSize);
@@ -96,43 +97,66 @@ public class CustomersImpl implements Customers {
 
 	@Override
 	public int totalCount(String filter) throws IOException {
+		
 		PersonMetadata personDm = PersonImpl.dm();
-		String statement = String.format("SELECT COUNT(%s) FROM %s WHERE %s IN (SELECT %s FROM %s WHERE concat(%s,' ', %s) ILIKE ?  OR concat(%s, ' ', %s) ILIKE ?)", dm.keyName(), dm.domainName(), dm.keyName(), personDm.keyName(), personDm.domainName(), personDm.firstNameKey(), personDm.lastNameKey(), personDm.lastNameKey(), personDm.firstNameKey());
+		String statement = String.format("SELECT COUNT(%s) FROM %s "
+				+ "WHERE %s IN (SELECT %s FROM %s WHERE (concat(%s,' ', %s) ILIKE ?  OR concat(%s, ' ', %s) ILIKE ?) AND %s=?) ", 
+				dm.keyName(), dm.domainName(), 
+				dm.keyName(), personDm.keyName(), personDm.domainName(), personDm.firstNameKey(), personDm.lastNameKey(), personDm.lastNameKey(), personDm.firstNameKey(), personDm.companyIdKey());
 		
 		List<Object> params = new ArrayList<Object>();
 		filter = (filter == null) ? "" : filter;
 		params.add("%" + filter + "%");
 		params.add("%" + filter + "%");
+		params.add(company.id());
 		
 		List<Object> results = ds.find(statement, params);
 		return Integer.parseInt(results.get(0).toString());	
 	}
 
 	@Override
-	public Customer add(String firstName, String lastName, Sex sex, String address, Date birthDate, String tel1, String tel2, String email, String photo) throws IOException {
+	public Customer add(String firstName, String lastName, Sex sex, String address, LocalDate birthDate, String tel1, String tel2, String email, String photo) throws IOException {
 		Person person = persons.add(firstName, lastName, sex, address, birthDate, tel1, tel2, email, photo);		
-		return add(person);
+		return addPerson(person);
 	}
 
 	@Override
 	public void delete(Customer item) throws IOException {
-		ds.delete(item.id());
-		persons.delete(item);
+		if(contains(item)){
+			ds.delete(item.id());
+			persons.delete(item);
+		}		
 	}
 
 	@Override
 	public Customer get(UUID id) throws IOException {
 		Customer item = build(id);
 		
-		if(!item.isPresent())
+		if(!contains(item))
 			throw new NotFoundException("Le client n'a pas été trouvé !");
 		
 		return item;
 	}
 
 	@Override
-	public Customer add(Person person) throws IOException {
+	public Customer addPerson(Person person) throws IOException {
+		Customer customer = build(person.id());
+		
+		if(contains(customer))
+			throw new IllegalArgumentException("Le client existe déjà !");
+		
 		ds.set(person.id(), new HashMap<String, Object>());		
 		return build(person.id());
+	}
+
+	@Override
+	public Customer defaultCustomer() throws IOException {
+		Person defaultPerson = persons.defaultPerson();
+		Customer defaultCustomer = build(defaultPerson.id());
+		
+		if(!contains(defaultCustomer))
+			return addPerson(defaultPerson);
+		else
+			return defaultCustomer;
 	}
 }

@@ -3,7 +3,6 @@ package com.sales.domains.impl;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +23,7 @@ import com.sales.domains.api.Payment;
 import com.sales.domains.api.PaymentMetadata;
 import com.sales.domains.api.PaymentMode;
 import com.securities.api.Sequence;
-import com.securities.api.SequenceMetadata;
 import com.securities.api.Sequence.SequenceReserved;
-import com.securities.impl.SequenceImpl;
 import com.sales.domains.api.InvoicePayments;
 
 public class InvoicePaymentsImpl implements InvoicePayments {
@@ -111,16 +108,7 @@ public class InvoicePaymentsImpl implements InvoicePayments {
 		return build(id);
 	}
 	
-	private Sequence sequence() throws IOException{
-		SequenceMetadata dm = SequenceImpl.dm();
-		DomainsStore ds = base.domainsStore(dm);
-	
-		SequenceReserved code = SequenceReserved.PAYMENT;		
-		List<Object> values = ds.find(String.format("SELECT %s FROM %s WHERE %s=?", dm.keyName(), dm.domainName(), dm.codeIdKey()), Arrays.asList(code.id()));
-		
-		if(values.isEmpty())
-			throw new IllegalArgumentException(String.format("Vous devez configurer la séquence de %s !", code.toString()));
-		
-		return new SequenceImpl(base, UUIDConvert.fromObject(values.get(0)));
+	private Sequence sequence() throws IOException {
+		return invoice.purchaseOrder().module().company().sequences().reserved(SequenceReserved.PAYMENT);
 	}
 }

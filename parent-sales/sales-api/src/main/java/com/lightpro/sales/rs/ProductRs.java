@@ -42,12 +42,14 @@ import com.sales.domains.api.Product;
 import com.sales.domains.api.ProductAmounts;
 import com.sales.domains.api.Products;
 import com.securities.api.MesureUnit;
+import com.securities.api.Secured;
 import com.securities.api.Tax;
 
 @Path("/product")
 public class ProductRs extends SalesBaseRs {
 	
 	@GET
+	@Secured
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAll() throws IOException {	
 		
@@ -67,6 +69,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}/tax")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAllTaxes(@PathParam("id") final UUID id) throws IOException {	
@@ -87,6 +90,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/resume-sales")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getResumeSales(@QueryParam("start") String startStr, @QueryParam("end") String endStr) throws IOException {	
@@ -117,6 +121,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/search")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response search( @QueryParam("page") int page, 
@@ -144,6 +149,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSingle(@PathParam("id") UUID id) throws IOException {	
@@ -161,6 +167,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}/pricing")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getPricing(@PathParam("id") UUID id) throws IOException {	
@@ -178,6 +185,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/pricing-mode/tranche")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAllPriceModeTranche() throws IOException {	
@@ -200,6 +208,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/price-type")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAllPriceType() throws IOException {	
@@ -222,6 +231,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response add(final ProductEdited cmd) throws IOException {
 		
@@ -239,6 +249,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/tax/{taxid}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response add(@PathParam("id") final UUID id, @PathParam("taxid") final UUID taxId) throws IOException {
@@ -259,6 +270,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/pricing")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response update(@PathParam("id") final UUID id, final PricingEdited cmd) throws IOException {
@@ -292,6 +304,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/calculate-amount")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response add(@PathParam("id") final UUID id, final ProductAmountsCmd cmd) throws IOException {
@@ -310,6 +323,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@PUT
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response update(@PathParam("id") final UUID id, final ProductEdited cmd) throws IOException {
@@ -329,6 +343,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@DELETE
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response delete(@PathParam("id") final UUID id) throws IOException {
@@ -347,6 +362,7 @@ public class ProductRs extends SalesBaseRs {
 	}
 	
 	@DELETE
+	@Secured
 	@Path("/{id}/tax/{taxid}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response delete(@PathParam("id") final UUID id, @PathParam("taxid") final UUID taxId) throws IOException {

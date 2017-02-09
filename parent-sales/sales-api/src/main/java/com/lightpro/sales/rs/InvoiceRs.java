@@ -27,11 +27,13 @@ import com.sales.domains.api.Invoice;
 import com.sales.domains.api.Invoices;
 import com.sales.domains.api.OrderProducts;
 import com.sales.domains.api.Payment;
+import com.securities.api.Secured;
 
 @Path("/invoice")
 public class InvoiceRs extends SalesBaseRs {
 	
 	@GET
+	@Secured
 	@Path("/search")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response search( @QueryParam("page") int page, 
@@ -59,6 +61,7 @@ public class InvoiceRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSingle(@PathParam("id") UUID id) throws IOException {	
@@ -76,6 +79,7 @@ public class InvoiceRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}/product")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAllProducts(@PathParam("id") UUID id) throws IOException {	
@@ -97,6 +101,7 @@ public class InvoiceRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}/payment")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getPayments(@PathParam("id") final UUID id) throws IOException {
@@ -118,6 +123,7 @@ public class InvoiceRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/payment")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response addPayment(@PathParam("id") final UUID id, final PaymentEdited cmd) throws IOException {
@@ -136,6 +142,7 @@ public class InvoiceRs extends SalesBaseRs {
 	}
 	
 	@PUT
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response update(@PathParam("id") final UUID id, final InvoiceEdited cmd) throws IOException {
@@ -154,6 +161,7 @@ public class InvoiceRs extends SalesBaseRs {
 	}	
 	
 	@DELETE
+	@Secured
 	@Path("/{id}/payment/{paymentid}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response delete(@PathParam("id") final UUID id, @PathParam("paymentid") final UUID paymentId) throws IOException {

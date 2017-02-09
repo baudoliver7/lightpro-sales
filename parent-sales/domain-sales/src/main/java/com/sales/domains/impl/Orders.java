@@ -3,7 +3,6 @@ package com.sales.domains.impl;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,29 +17,28 @@ import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
 import com.infrastructure.datasource.DomainsStore;
 import com.sales.domains.api.Customer;
-import com.sales.domains.api.Customers;
 import com.sales.domains.api.PaymentConditionStatus;
 import com.sales.domains.api.PurchaseOrder;
 import com.sales.domains.api.PurchaseOrderMetadata;
 import com.sales.domains.api.PurchaseOrderStatus;
 import com.sales.domains.api.PurchaseOrders;
-import com.securities.api.Person;
+import com.sales.domains.api.Sales;
 import com.securities.api.Sequence;
-import com.securities.api.SequenceMetadata;
 import com.securities.api.User;
 import com.securities.api.Sequence.SequenceReserved;
-import com.securities.impl.SequenceImpl;
 
 public class Orders implements PurchaseOrders {
 
 	private transient final Base base;
 	private final transient PurchaseOrderMetadata dm;
 	private final transient DomainsStore ds;
+	private final transient Sales module;
 	
-	public Orders(final Base base){
+	public Orders(final Base base, final Sales module){
 		this.base = base;
 		this.dm = PurchaseOrderMetadata.create();
 		this.ds = this.base.domainsStore(this.dm);	
+		this.module = module;
 	}
 	
 	@Override
@@ -55,7 +53,12 @@ public class Orders implements PurchaseOrders {
 
 	@Override
 	public boolean contains(PurchaseOrder item) {
-		return item.isPresent();
+		try {
+			return item.isPresent() && item.module().isEqual(module);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	@Override
@@ -68,11 +71,12 @@ public class Orders implements PurchaseOrders {
 		List<PurchaseOrder> values = new ArrayList<PurchaseOrder>();
 		
 		HorodateMetadata hm = HorodateImpl.dm();
-		String statement = String.format("SELECT %s FROM %s WHERE %s ILIKE ? ORDER BY %s DESC LIMIT ? OFFSET ?", dm.keyName(), dm.domainName(), dm.referenceKey(), hm.dateCreatedKey());
+		String statement = String.format("SELECT %s FROM %s WHERE %s ILIKE ? AND %s=? ORDER BY %s DESC LIMIT ? OFFSET ?", dm.keyName(), dm.domainName(), dm.referenceKey(), dm.moduleIdKey(), hm.dateCreatedKey());
 		
 		List<Object> params = new ArrayList<Object>();
 		filter = (filter == null) ? "" : filter;
 		params.add("%" + filter + "%");
+		params.add(module.id());
 		
 		if(pageSize > 0){
 			params.add(pageSize);
@@ -92,11 +96,12 @@ public class Orders implements PurchaseOrders {
 
 	@Override
 	public int totalCount(String filter) throws IOException {
-		String statement = String.format("SELECT COUNT(%s) FROM %s WHERE %s ILIKE ?", dm.keyName(), dm.domainName(), dm.referenceKey());
+		String statement = String.format("SELECT COUNT(%s) FROM %s WHERE %s ILIKE ? AND %s=?", dm.keyName(), dm.domainName(), dm.referenceKey(), dm.moduleIdKey());
 		
 		List<Object> params = new ArrayList<Object>();
 		filter = (filter == null) ? "" : filter;
 		params.add("%" + filter + "%");
+		params.add(module.id());
 		
 		List<Object> results = ds.find(statement, params);
 		return Integer.parseInt(results.get(0).toString());	
@@ -114,8 +119,11 @@ public class Orders implements PurchaseOrders {
 
 	@Override
 	public void delete(PurchaseOrder item) throws IOException {
-		item.products().deleteAll();
-		ds.delete(item.id());
+		if(contains(item))
+		{
+			item.products().deleteAll();
+			ds.delete(item.id());
+		}
 	}
 
 	@Override
@@ -128,14 +136,7 @@ public class Orders implements PurchaseOrders {
             throw new IllegalArgumentException("Invalid expiration date : it can't be empty!");
 				
 		if (!customer.isPresent()){
-			Person person = customer;
-			
-			Customers customers = new CustomersImpl(base);
-			if(person.isPresent()){
-				customers.add(person);
-			}else{
-				customer = customers.get(UUIDConvert.fromObject("7a4c8230-2df3-4668-8c62-fe98776d37a9")); // mettre un client par défaut
-			}			
+			customer = module.customers().defaultCustomer(); // mettre un client par défaut		
 		}
 		
 		if (!seller.isPresent())
@@ -151,6 +152,7 @@ public class Orders implements PurchaseOrders {
 		params.put(dm.sellerIdKey(), seller.id());
 		params.put(dm.statusIdKey(), PurchaseOrderStatus.DRAFT.id());	
 		params.put(dm.referenceKey(), sequence().generate());
+		params.put(dm.moduleIdKey(), module.id());
 		
 		UUID id = UUID.randomUUID();
 		ds.set(id, params);	
@@ -159,15 +161,6 @@ public class Orders implements PurchaseOrders {
 	}
 
 	private Sequence sequence() throws IOException{
-		SequenceMetadata dm = SequenceImpl.dm();
-		DomainsStore ds = base.domainsStore(dm);
-	
-		SequenceReserved code = SequenceReserved.PURCHASE_ORDER;		
-		List<Object> values = ds.find(String.format("SELECT %s FROM %s WHERE %s=?", dm.keyName(), dm.domainName(), dm.codeIdKey()), Arrays.asList(code.id()));
-		
-		if(values.isEmpty())
-			throw new IllegalArgumentException(String.format("Vous devez configurer la séquence de %s !", code.toString()));
-		
-		return new SequenceImpl(base, UUIDConvert.fromObject(values.get(0)));
+		return module.company().sequences().reserved(SequenceReserved.PURCHASE_ORDER);
 	}
 }

@@ -31,12 +31,14 @@ import com.sales.domains.api.PaymentConditionStatus;
 import com.sales.domains.api.Product;
 import com.sales.domains.api.PurchaseOrder;
 import com.sales.domains.api.PurchaseOrders;
+import com.securities.api.Secured;
 import com.securities.api.User;
 
 @Path("/quotation")
 public class QuotationRs extends SalesBaseRs {
 	
 	@GET
+	@Secured
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAll() throws IOException {	
 		
@@ -56,6 +58,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/payment-condition")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAllPaymentConditions() throws IOException {	
@@ -76,6 +79,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/search")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response search( @QueryParam("page") int page, 
@@ -103,6 +107,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSingle(@PathParam("id") UUID id) throws IOException {	
@@ -120,6 +125,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}/product")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAllProducts(@PathParam("id") UUID id) throws IOException {	
@@ -141,6 +147,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response add(final QuotationEdited cmd) throws IOException {
 		
@@ -176,6 +183,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/mark-send")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response markSend(@PathParam("id") final UUID id) throws IOException {
@@ -194,6 +202,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/mark-sold")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response markSold(@PathParam("id") final UUID id) throws IOException {
@@ -212,6 +221,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/cancel")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response cancel(@PathParam("id") final UUID id) throws IOException {
@@ -230,6 +240,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/re-open")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response reOpen(@PathParam("id") final UUID id) throws IOException {
@@ -248,6 +259,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@PUT
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response update(@PathParam("id") final UUID id, final QuotationEdited cmd) throws IOException {
@@ -284,6 +296,7 @@ public class QuotationRs extends SalesBaseRs {
 	}
 	
 	@DELETE
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response delete(@PathParam("id") final UUID id) throws IOException {

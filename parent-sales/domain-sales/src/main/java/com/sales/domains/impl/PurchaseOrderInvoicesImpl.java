@@ -3,7 +3,6 @@ package com.sales.domains.impl;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +26,7 @@ import com.sales.domains.api.PurchaseOrder;
 import com.sales.domains.api.PurchaseOrderInvoices;
 import com.sales.domains.api.PurchaseOrderStatus;
 import com.securities.api.Sequence;
-import com.securities.api.SequenceMetadata;
 import com.securities.api.Sequence.SequenceReserved;
-import com.securities.impl.SequenceImpl;
 
 public class PurchaseOrderInvoicesImpl implements PurchaseOrderInvoices {
 
@@ -121,16 +118,7 @@ public class PurchaseOrderInvoicesImpl implements PurchaseOrderInvoices {
 	}
 	
 	private Sequence sequence() throws IOException{
-		SequenceMetadata dm = SequenceImpl.dm();
-		DomainsStore ds = base.domainsStore(dm);
-	
-		SequenceReserved code = SequenceReserved.INVOICE;		
-		List<Object> values = ds.find(String.format("SELECT %s FROM %s WHERE %s=?", dm.keyName(), dm.domainName(), dm.codeIdKey()), Arrays.asList(code.id()));
-		
-		if(values.isEmpty())
-			throw new IllegalArgumentException(String.format("Vous devez configurer la séquence de %s !", code.toString()));
-		
-		return new SequenceImpl(base, UUIDConvert.fromObject(values.get(0)));
+		return purchaseOrder.module().company().sequences().reserved(SequenceReserved.INVOICE);
 	}
 
 	@Override
@@ -141,33 +129,33 @@ public class PurchaseOrderInvoicesImpl implements PurchaseOrderInvoices {
 	}
 	
 	@Override
-	public Invoice generateDownPayment(double amount, boolean withTax) throws IOException {		
+	public Invoice generateDownPayment(LocalDate invoiceDate, double amount, boolean withTax) throws IOException {		
 		
-		Invoice invoice = add(LocalDate.now(), InvoiceType.DOWN_PAYMENT, purchaseOrder.paymentCondition(), null, null);
-		invoice.products().add(1, amount, 0, invoice.reference(), new ProductsImpl(base).getDownPaymentProduct(), withTax);
+		Invoice invoice = add(invoiceDate, InvoiceType.DOWN_PAYMENT, purchaseOrder.paymentCondition(), null, null);
+		invoice.products().add(1, amount, 0, invoice.reference(), purchaseOrder.module().products().getDownPaymentProduct(), withTax);
 			
 		return invoice;
 	}
 
 	@Override
-	public Invoice generateDownPayment(int percent, boolean withTax) throws IOException {
+	public Invoice generateDownPayment(LocalDate invoiceDate, int percent, boolean withTax) throws IOException {
 		
 		if(percent > 100 || percent <= 0)
 			throw new IllegalArgumentException("Vous devez spécifier un nombre compris entre 1 et 100 !");
 		
-		Invoice invoice = add(LocalDate.now(), InvoiceType.DOWN_PAYMENT, purchaseOrder.paymentCondition(), null, null);
-		invoice.products().add(1, (percent / 100.0) * purchaseOrder.totalAmountHt(), 0, invoice.reference(), new ProductsImpl(base).getDownPaymentProduct(), withTax);
+		Invoice invoice = add(invoiceDate, InvoiceType.DOWN_PAYMENT, purchaseOrder.paymentCondition(), null, null);
+		invoice.products().add(1, (percent / 100.0) * purchaseOrder.totalAmountHt(), 0, invoice.reference(), purchaseOrder.module().products().getDownPaymentProduct(), withTax);
 				
 		return invoice;
 	}
 
 	@Override
-	public Invoice generateFinalInvoice() throws IOException {
+	public Invoice generateFinalInvoice(LocalDate invoiceDate) throws IOException {
 		
 		if(purchaseOrder.status() == PurchaseOrderStatus.ENTIRELY_INVOICED)
 			throw new IllegalArgumentException("Le bon de commande est entièrement facturé !");
 		
-		Invoice invoice = add(LocalDate.now(), InvoiceType.FINAL_INVOICE, purchaseOrder.paymentCondition(), null, null);
+		Invoice invoice = add(invoiceDate, InvoiceType.FINAL_INVOICE, purchaseOrder.paymentCondition(), null, null);
 		
 		for (OrderProduct op : purchaseOrder.products().all()) {
 			invoice.products().add(op.quantity(), op.unitPrice(), op.reductionAmount(), op.description(), op.product(), op.totalTaxAmount() > 0);

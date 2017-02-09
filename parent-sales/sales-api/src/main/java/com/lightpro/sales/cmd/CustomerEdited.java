@@ -1,13 +1,18 @@
 package com.lightpro.sales.cmd;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.UUID;
 
+import com.common.utilities.convert.TimeConvert;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.securities.api.Sex;
 
 public class CustomerEdited {
 	
+	private final UUID id;
 	private final String firstName;
 	private final String lastName;
 	private final Sex sex;
@@ -23,7 +28,8 @@ public class CustomerEdited {
 	}
 	
 	@JsonCreator
-	public CustomerEdited(@JsonProperty("firstName") final String firstName,
+	public CustomerEdited(@JsonProperty("id") final UUID id,
+						  @JsonProperty("firstName") final String firstName,
 						  @JsonProperty("lastName") final String lastName, 
 				    	  @JsonProperty("sex") final Sex sex,
 				    	  @JsonProperty("address") final String address,
@@ -33,6 +39,7 @@ public class CustomerEdited {
 						  @JsonProperty("email") final String email, 
 				    	  @JsonProperty("photo") final String photo){
 		
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.sex = sex;
@@ -42,6 +49,10 @@ public class CustomerEdited {
 		this.tel2 = tel2;
 		this.email = email;
 		this.photo = photo;
+	}
+	
+	public UUID id(){
+		return id;
 	}
 	
 	public String firstName(){
@@ -60,8 +71,8 @@ public class CustomerEdited {
 		return address;
 	}
 	
-	public Date birthDate(){
-		return birthDate;
+	public LocalDate birthDate(){		
+		return TimeConvert.toLocalDate(birthDate, ZoneId.systemDefault());
 	}
 	
 	public String tel1(){

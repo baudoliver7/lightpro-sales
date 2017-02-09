@@ -1,6 +1,7 @@
 package com.lightpro.sales.rs;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -32,12 +33,14 @@ import com.sales.domains.api.Product;
 import com.sales.domains.api.PurchaseOrder;
 import com.sales.domains.api.PurchaseOrderInvoices;
 import com.sales.domains.api.PurchaseOrders;
+import com.securities.api.Secured;
 import com.securities.api.User;
 
 @Path("/purchase-order")
 public class PurchaseOrderRs extends SalesBaseRs {
 	
 	@GET
+	@Secured
 	@Path("/search")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response search( @QueryParam("page") int page, 
@@ -65,6 +68,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSingle(@PathParam("id") UUID id) throws IOException {	
@@ -82,6 +86,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}/product")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAllProducts(@PathParam("id") UUID id) throws IOException {	
@@ -103,6 +108,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}/invoice")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAllInvoices(@PathParam("id") UUID id) throws IOException {	
@@ -124,6 +130,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/invoice/down-payment/amount")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response addDownPaymentAmount(@PathParam("id") final UUID id, final DownPaymentCmd cmd) throws IOException {
@@ -134,7 +141,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 					public Response call() throws Exception {
 						
 						PurchaseOrder order = sales().purchases().get(id);
-						Invoice invoice = order.invoices().generateDownPayment(cmd.amount(), cmd.withTax());
+						Invoice invoice = order.invoices().generateDownPayment(LocalDate.now(), cmd.amount(), cmd.withTax());
 						
 						return Response.ok(new InvoiceVm(invoice)).build();
 					}
@@ -142,6 +149,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/invoice/down-payment/percent")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response addDownPaymentPercent(@PathParam("id") final UUID id, final DownPaymentCmd cmd) throws IOException {
@@ -152,7 +160,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 					public Response call() throws Exception {
 						
 						PurchaseOrder order = sales().purchases().get(id);
-						Invoice invoice = order.invoices().generateDownPayment(cmd.percent(), cmd.withTax());
+						Invoice invoice = order.invoices().generateDownPayment(LocalDate.now(), cmd.percent(), cmd.withTax());
 						
 						return Response.ok(new InvoiceVm(invoice)).build();
 					}
@@ -160,6 +168,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Path("/{id}/invoice/final")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response addFinalInvoice(@PathParam("id") final UUID id) throws IOException {
@@ -170,7 +179,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 					public Response call() throws Exception {
 						
 						PurchaseOrder order = sales().purchases().get(id);
-						Invoice invoice = order.invoices().generateFinalInvoice();
+						Invoice invoice = order.invoices().generateFinalInvoice(LocalDate.now());
 						
 						return Response.ok(new InvoiceVm(invoice)).build();
 					}
@@ -178,6 +187,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 	}
 	
 	@PUT
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response update(@PathParam("id") final UUID id, final QuotationEdited cmd) throws IOException {
@@ -214,6 +224,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 	}
 	
 	@DELETE
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response delete(@PathParam("id") final UUID id) throws IOException {
@@ -232,6 +243,7 @@ public class PurchaseOrderRs extends SalesBaseRs {
 	}
 	
 	@DELETE
+	@Secured
 	@Path("/{id}/invoice/{invoiceid}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response delete(@PathParam("id") final UUID id, @PathParam("invoiceid") final UUID invoiceId) throws IOException {

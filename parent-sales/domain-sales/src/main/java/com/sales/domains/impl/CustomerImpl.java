@@ -1,7 +1,7 @@
 package com.sales.domains.impl;
 
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import com.infrastructure.core.Horodate;
@@ -10,6 +10,7 @@ import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
 import com.sales.domains.api.Customer;
 import com.sales.domains.api.CustomerMetadata;
+import com.securities.api.Company;
 import com.securities.api.Person;
 import com.securities.api.Sex;
 import com.securities.impl.PersonImpl;
@@ -60,7 +61,7 @@ public class CustomerImpl implements Customer {
 
 	@Override
 	public boolean isPresent() {
-		return person.isPresent();
+		return base.domainsStore(dm).exists(person.id());
 	}
 
 	@Override
@@ -69,7 +70,7 @@ public class CustomerImpl implements Customer {
 	}
 
 	@Override
-	public Date birthDate() throws IOException {
+	public LocalDate birthDate() throws IOException {
 		return person.birthDate();
 	}
 
@@ -94,7 +95,7 @@ public class CustomerImpl implements Customer {
 	}
 
 	@Override
-	public void update(String firstName, String lastName, Sex sex, String address, Date birthDate, String tel1, String tel2, String email, String photo) throws IOException {
+	public void update(String firstName, String lastName, Sex sex, String address, LocalDate birthDate, String tel1, String tel2, String email, String photo) throws IOException {
 		this.person.update(firstName, lastName, sex, address, birthDate, tel1, tel2, email, photo);	
 	}
 
@@ -106,5 +107,15 @@ public class CustomerImpl implements Customer {
 	@Override
 	public boolean isNotEqual(Person item) {
 		return !isEqual(item);
+	}
+
+	@Override
+	public boolean isPresentAsPerson() {
+		return person.isPresent();
+	}
+
+	@Override
+	public Company company() throws IOException {
+		return person.company();
 	}
 }

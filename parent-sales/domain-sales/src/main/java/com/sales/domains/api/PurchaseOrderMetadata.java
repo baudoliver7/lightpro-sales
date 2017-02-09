@@ -75,6 +75,10 @@ public class PurchaseOrderMetadata implements DomainMetadata {
 		return "payment_condition_id";
 	}
 	
+	public String moduleIdKey(){
+		return "moduleid";
+	}	
+	
 	public static PurchaseOrderMetadata create(){
 		return new PurchaseOrderMetadata();
 	}

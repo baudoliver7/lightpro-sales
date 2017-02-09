@@ -22,11 +22,13 @@ import com.lightpro.sales.cmd.CustomerEdited;
 import com.lightpro.sales.vm.CustomerVm;
 import com.sales.domains.api.Customer;
 import com.sales.domains.api.Customers;
+import com.securities.api.Secured;
 
 @Path("/customer")
 public class CustomerRs extends SalesBaseRs {
 	
 	@GET
+	@Secured
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getAll() throws IOException {	
 		
@@ -46,6 +48,7 @@ public class CustomerRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/search")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response search( @QueryParam("page") int page, 
@@ -73,6 +76,7 @@ public class CustomerRs extends SalesBaseRs {
 	}
 	
 	@GET
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response getSingle(@PathParam("id") UUID id) throws IOException {	
@@ -90,6 +94,7 @@ public class CustomerRs extends SalesBaseRs {
 	}
 	
 	@POST
+	@Secured
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response add(final CustomerEdited cmd) throws IOException {
 		
@@ -98,15 +103,23 @@ public class CustomerRs extends SalesBaseRs {
 					@Override
 					public Response call() throws IOException {
 						
-						Customers containers = sales().customers();
-						Customer item = containers.add(cmd.firstName(), cmd.lastName(), cmd.sex(), cmd.address(), cmd.birthDate(), cmd.tel1(), cmd.tel2(), cmd.email(), cmd.photo());
+						Customers customers = sales().customers();
+						Customer customer = customers.build(cmd.id());
 						
-						return Response.ok(new CustomerVm(item)).build();
+						if (!customer.isPresent() && customer.isPresentAsPerson()){
+							customer = customers.addPerson(customer);	
+							customer.update(cmd.firstName(), cmd.lastName(), cmd.sex(), cmd.address(), cmd.birthDate(), cmd.tel1(), cmd.tel2(), cmd.email(), cmd.photo());
+						} else {
+							customer = customers.add(cmd.firstName(), cmd.lastName(), cmd.sex(), cmd.address(), cmd.birthDate(), cmd.tel1(), cmd.tel2(), cmd.email(), cmd.photo());
+						}
+						
+						return Response.ok(new CustomerVm(customer)).build();
 					}
 				});		
 	}
 	
 	@PUT
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response update(@PathParam("id") final UUID id, final CustomerEdited cmd) throws IOException {
@@ -125,6 +138,7 @@ public class CustomerRs extends SalesBaseRs {
 	}
 	
 	@DELETE
+	@Secured
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response delete(@PathParam("id") final UUID id) throws IOException {

@@ -7,7 +7,6 @@ import com.infrastructure.core.Horodate;
 import com.infrastructure.core.impl.HorodateImpl;
 import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
-import com.sales.domains.api.Currency;
 import com.sales.domains.api.IntervalsPricing;
 import com.sales.domains.api.Pricing;
 import com.sales.domains.api.PricingMetadata;
@@ -58,7 +57,7 @@ public class PricingImpl implements Pricing {
 	public String priceSummary() throws IOException {
 		
 		if(mode() == PricingMode.FIX)
-			return String.format("%.0f %s", fixPrice(), new Currency(base).currencyShortName());
+			return String.format("%.0f %s", fixPrice(), product().module().company().currencyShortName());
 		else
 			return intervals().priceSummary();
 	}

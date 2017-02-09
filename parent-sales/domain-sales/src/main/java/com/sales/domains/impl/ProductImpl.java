@@ -17,6 +17,7 @@ import com.sales.domains.api.Product;
 import com.sales.domains.api.ProductAmounts;
 import com.sales.domains.api.ProductMetadata;
 import com.sales.domains.api.ProductTaxes;
+import com.sales.domains.api.Sales;
 import com.securities.api.MesureUnit;
 import com.securities.impl.MesureUnitImpl;
 
@@ -142,5 +143,11 @@ public class ProductImpl implements Product {
 	@Override
 	public boolean isNotEqual(Product item) {
 		return !isEqual(item);
+	}
+
+	@Override
+	public Sales module() throws IOException {
+		UUID moduleId = ds.get(dm.moduleIdKey());
+		return new SalesImpl(base, moduleId);
 	}
 }

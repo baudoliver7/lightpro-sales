@@ -12,6 +12,7 @@ public interface PurchaseOrder extends Order {
 	LocalDate expirationDate() throws IOException;
 	PaymentConditionStatus paymentCondition() throws IOException;	
 	PurchaseOrderInvoices invoices();	
+	Sales module() throws IOException;
 	
 	void update(LocalDate date, LocalDate expirationDate, PaymentConditionStatus paymentCondition, String cgv, String notes, Customer customer, User seller) throws IOException;	
 	void markSend() throws IOException;

@@ -18,7 +18,6 @@ import com.infrastructure.datasource.Base;
 import com.infrastructure.datasource.DomainStore;
 import com.infrastructure.datasource.DomainsStore;
 import com.infrastructure.datasource.Base.OrderDirection;
-import com.sales.domains.api.Currency;
 import com.sales.domains.api.IntervalPricing;
 import com.sales.domains.api.IntervalPricingMetadata;
 import com.sales.domains.api.IntervalsPricing;
@@ -45,7 +44,7 @@ public class IntervalsPricingImpl implements IntervalsPricing {
 		
 		String summary = "";				
 		for (IntervalPricing ip : all()) {
-			summary += String.format("De %s à %s %s : %s de %.0f %s / ", ip.begin(), ip.end(), unit, ip.priceType().toString(), ip.price(), new Currency(base).currencyShortName());
+			summary += String.format("De %s à %s %s : %s de %.0f %s / ", ip.begin(), ip.end(), unit, ip.priceType().toString(), ip.price(), pricing.product().module().company().currencyShortName());
 		}
 		
 		return summary;
