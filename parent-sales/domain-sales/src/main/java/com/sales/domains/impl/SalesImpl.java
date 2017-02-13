@@ -163,4 +163,14 @@ public class SalesImpl implements Sales {
 	public PurchaseOrders orders() {
 		return new Orders(base, this);
 	}
+
+	@Override
+	public void activate(boolean active) throws IOException {
+		origin.activate(active);
+	}
+
+	@Override
+	public boolean isActive() {
+		return origin.isActive();
+	}
 }
