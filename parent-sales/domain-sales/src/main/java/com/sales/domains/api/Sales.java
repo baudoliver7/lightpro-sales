@@ -17,7 +17,7 @@ public interface Sales extends Module {
 	PurchaseOrders purchases();
 	PurchaseOrders orders();
 	Invoices invoices();
-	Membership membership();
+	Membership membership() throws IOException;
 	Customers customers() throws IOException;
 	Payments payments();
 }

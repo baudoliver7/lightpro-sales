@@ -70,8 +70,8 @@ public class SalesImpl implements Sales {
 	}
 
 	@Override
-	public Membership membership() {
-		return new MembershipImpl(base);
+	public Membership membership() throws IOException {
+		return new MembershipImpl(base, origin.company());
 	}
 
 	@Override
