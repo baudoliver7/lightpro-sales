@@ -79,6 +79,38 @@ public class PurchaseOrderMetadata implements DomainMetadata {
 		return "moduleid";
 	}	
 	
+	public String soldDateKey(){
+		return "solddate";
+	}
+	
+	public String livraisonDelayDateKey(){
+		return "livraison_delaydate";
+	}
+	
+	public String livraisonDateKey(){
+		return "livraisondate";
+	}	
+	
+	public String modulePdvIdKey(){
+		return "module_pdvid";
+	}	
+	
+	public String netCommercialKey(){
+		return "net_commercial";
+	}
+	
+	public String reduceAmountKey(){
+		return "reductionamount";
+	}
+	
+	public String descriptionKey(){
+		return "description";
+	}
+	
+	public String teamIdKey(){
+		return "teamid";
+	}
+	
 	public static PurchaseOrderMetadata create(){
 		return new PurchaseOrderMetadata();
 	}

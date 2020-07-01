@@ -47,9 +47,57 @@ public class PaymentMetadata implements DomainMetadata {
 		return "modeid";
 	}
 	
+	public String transactionReferenceKey(){
+		return "transaction_reference";
+	}
+	
 	public String invoiceIdKey(){
 		return "invoiceid";
 	}	
+	
+	public String stepKey(){
+		return "step";
+	}
+	
+	public String statusIdKey(){
+		return "statusid";
+	}
+	
+	public String typeIdKey(){
+		return "typeid";
+	}
+	
+	public String provisionIdKey(){
+		return "provisionid";
+	}
+	
+	public String customerIdKey(){
+		return "customerid";
+	}
+	
+	public String moduleIdKey(){
+		return "moduleid";
+	}
+	
+	public String modulePdvIdKey(){
+		return "module_pdvid";
+	}
+	
+	public String purchaseOrderIdKey(){
+		return "purchase_orderid";
+	}
+	
+	public String receivedAmountKey(){
+		return "received_amount";
+	}
+	
+	public String changeKey(){
+		return "change";
+	}
+	
+	public String cashierIdKey(){
+		return "cashierid";
+	}
 	
 	public static PaymentMetadata create(){
 		return new PaymentMetadata();

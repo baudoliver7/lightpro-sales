@@ -34,4 +34,8 @@ public class ProductTaxMetadata implements DomainMetadata {
 	public String taxIdKey(){
 		return "taxid";
 	}
+	
+	public static ProductTaxMetadata create(){
+		return new ProductTaxMetadata();
+	}
 }

@@ -9,11 +9,12 @@ import com.sales.domains.api.PriceType;
 public class IntervalPricingEdited {
 	
 	private final UUID id;
-	private final int begin;
-	private final int end;
+	private final double begin;
+	private final double end;
 	private final double price;
 	private final int priceTypeId;
 	private final boolean deleted;
+	private final boolean taxNotApplied;
 	
 	public IntervalPricingEdited(){
 		throw new UnsupportedOperationException("#IntervalPricingEdited()");
@@ -21,11 +22,12 @@ public class IntervalPricingEdited {
 	
 	@JsonCreator
 	public IntervalPricingEdited( @JsonProperty("id") final UUID id,
-								  @JsonProperty("begin") final int begin, 
-						    	  @JsonProperty("end") final int end,
+								  @JsonProperty("begin") final double begin, 
+						    	  @JsonProperty("end") final double end,
 						    	  @JsonProperty("price") final double price,
 						    	  @JsonProperty("priceTypeId") final int priceTypeId,
-						    	  @JsonProperty("deleted") final boolean deleted){
+						    	  @JsonProperty("deleted") final boolean deleted,
+						    	  @JsonProperty("taxNotApplied") final boolean taxNotApplied){
 		
 		this.id = id;
 		this.begin = begin;
@@ -33,17 +35,18 @@ public class IntervalPricingEdited {
 		this.price = price;
 		this.priceTypeId = priceTypeId;
 		this.deleted = deleted;
+		this.taxNotApplied = taxNotApplied;
 	}
 	
 	public UUID id(){
 		return id;
 	}
 	
-	public int begin(){
+	public double begin(){
 		return begin;
 	}
 	
-	public int end(){
+	public double end(){
 		return end;
 	}
 	
@@ -57,5 +60,9 @@ public class IntervalPricingEdited {
 	
 	public boolean deleted(){
 		return deleted;
+	}
+	
+	public boolean taxNotApplied(){
+		return taxNotApplied;
 	}
 }

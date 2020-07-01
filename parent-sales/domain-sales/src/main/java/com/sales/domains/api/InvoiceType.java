@@ -1,9 +1,10 @@
 package com.sales.domains.api;
 
 public enum InvoiceType {
+	
 	NONE(0, "Non défini"),
-	DOWN_PAYMENT(1, "Acompte"), 
-	FINAL_INVOICE(2, "Facture finale");
+	FACTURE_DOIT(1, "Facture Doit"), 
+	FACTURE_AVOIR(2, "Facture Avoir");
 	
 	private final int id;
 	private final String name;

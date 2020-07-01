@@ -19,5 +19,6 @@
   <modules>
   	<module>domain-sales</module>
   	<module>sales-api</module>
+  	<module>sales-reporting</module>
   </modules>
 </project>

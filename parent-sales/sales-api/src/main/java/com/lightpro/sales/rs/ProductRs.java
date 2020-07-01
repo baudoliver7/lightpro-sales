@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -23,30 +24,56 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 
 import com.infrastructure.core.PaginationSet;
+import com.infrastructure.core.UseCode;
 import com.lightpro.sales.cmd.IntervalPricingEdited;
 import com.lightpro.sales.cmd.PricingEdited;
 import com.lightpro.sales.cmd.ProductAmountsCmd;
 import com.lightpro.sales.cmd.ProductEdited;
+import com.lightpro.sales.cmd.TaxEdited;
+import com.lightpro.sales.vm.ListValueVm;
+import com.lightpro.sales.vm.OrderProductVm;
 import com.lightpro.sales.vm.PriceTypeVm;
 import com.lightpro.sales.vm.PricingModeVm;
 import com.lightpro.sales.vm.PricingVm;
-import com.lightpro.sales.vm.ProductAmountsVm;
 import com.lightpro.sales.vm.ProductVm;
 import com.lightpro.sales.vm.ResumeSalesVm;
 import com.lightpro.sales.vm.TaxVm;
 import com.sales.domains.api.IntervalPricing;
+import com.sales.domains.api.OrderProduct;
 import com.sales.domains.api.PriceType;
 import com.sales.domains.api.Pricing;
 import com.sales.domains.api.PricingMode;
 import com.sales.domains.api.Product;
-import com.sales.domains.api.ProductAmounts;
+import com.sales.domains.api.ProductCategory;
 import com.sales.domains.api.Products;
 import com.securities.api.MesureUnit;
+import com.securities.api.NumberValueType;
 import com.securities.api.Secured;
 import com.securities.api.Tax;
 
 @Path("/product")
 public class ProductRs extends SalesBaseRs {
+	
+	@GET
+	@Secured
+	@Path("/reduce-amount/value-type")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response getTaxValueTypes() throws IOException {	
+		
+		return createHttpResponse(
+				new Callable<Response>(){
+					@Override
+					public Response call() throws IOException {
+						
+						List<ListValueVm> items = Arrays.asList(NumberValueType.values())
+													 .stream()
+											 		 .map(m -> new ListValueVm(m.id(), m.toString()))
+											 		 .collect(Collectors.toList());
+
+						return Response.ok(items).build();
+					}
+				});			
+	}
 	
 	@GET
 	@Secured
@@ -58,7 +85,7 @@ public class ProductRs extends SalesBaseRs {
 					@Override
 					public Response call() throws IOException {
 						
-						List<ProductVm> items = sales().products().all()
+						List<ProductVm> items = sales().products().of(UseCode.USER).all()
 													 .stream()
 											 		 .map(m -> new ProductVm(m))
 											 		 .collect(Collectors.toList());
@@ -113,7 +140,7 @@ public class ProductRs extends SalesBaseRs {
 						ResumeSalesVm item = new ResumeSalesVm(
 													products.invoicedAmount(start, end),
 													products.turnover(start, end),
-													products.amountInCirculation(start, end));
+													products.returnAmount(start, end));
 
 						return Response.ok(item).build();
 					}
@@ -126,20 +153,22 @@ public class ProductRs extends SalesBaseRs {
 	@Produces({MediaType.APPLICATION_JSON})
 	public Response search( @QueryParam("page") int page, 
 							@QueryParam("pageSize") int pageSize, 
-							@QueryParam("filter") String filter) throws IOException {
+							@QueryParam("filter") String filter,
+							@QueryParam("categoryId") UUID categoryId) throws IOException {
 		
 		return createHttpResponse(
 				new Callable<Response>(){
 					@Override
 					public Response call() throws IOException {
 						
-						Products container = sales().products();
+						ProductCategory category = sales().productCategories().build(categoryId);
+						Products container = sales().products().of(UseCode.USER).of(category);
 						
 						List<ProductVm> itemsVm = container.find(page, pageSize, filter).stream()
 															 .map(m -> new ProductVm(m))
 															 .collect(Collectors.toList());
 													
-						int count = container.totalCount(filter);
+						long count = container.count(filter);
 						PaginationSet<ProductVm> pagedSet = new PaginationSet<ProductVm>(itemsVm, page, count);
 						
 						return Response.ok(pagedSet).build();
@@ -240,9 +269,11 @@ public class ProductRs extends SalesBaseRs {
 					@Override
 					public Response call() throws IOException {
 						
+						ProductCategory category = sales().productCategories().build(cmd.categoryId());
 						MesureUnit unit = sales().mesureUnits().get(cmd.mesureUnitId());
-						sales().products().add(cmd.name(), cmd.barCode(), cmd.description(), unit);
+						Product item = sales().products().add(cmd.name(), cmd.internalReference(), cmd.barCode(), category, cmd.description(), unit, cmd.emballage(), cmd.quantity());
 						
+						log.info(String.format("Création du produit %s", item.name()));
 						return Response.status(Response.Status.OK).build();
 					}
 				});		
@@ -264,6 +295,7 @@ public class ProductRs extends SalesBaseRs {
 						
 						product.taxes().add(tax);
 						
+						log.info(String.format("Ajout de la taxe %s sur le produit %s", tax.name(), product.name()));
 						return Response.status(Response.Status.OK).build();
 					}
 				});		
@@ -281,7 +313,7 @@ public class ProductRs extends SalesBaseRs {
 					public Response call() throws IOException {
 						
 						Pricing pricing = sales().products().get(id).pricing();
-						pricing.update(cmd.fixPrice(), cmd.modeId());
+						pricing.update(cmd.fixPrice(), cmd.modeId(), cmd.reduceValue(), cmd.reduceValueType());
 						
 						for (IntervalPricingEdited ipe : cmd.intervals()) {
 							
@@ -291,13 +323,14 @@ public class ProductRs extends SalesBaseRs {
 								pricing.intervals().delete(ip);
 							else
 							{
-								if(ip.isPresent())
-									ip.update(ipe.begin(), ipe.end(), ipe.price(), ipe.priceType());
+								if(!ip.isNone())
+									ip.update(ipe.begin(), ipe.end(), ipe.price(), ipe.priceType(), ipe.taxNotApplied());
 								else
-									pricing.intervals().add(ipe.begin(), ipe.end(), ipe.price(), ipe.priceType());
+									pricing.intervals().add(ipe.begin(), ipe.end(), ipe.price(), ipe.priceType(), ipe.taxNotApplied());
 							}								
 						}
 						
+						log.info(String.format("Mise à jour de la tarification du produit %s", pricing.product().name()));
 						return Response.status(Response.Status.OK).build();
 					}
 				});		
@@ -307,17 +340,22 @@ public class ProductRs extends SalesBaseRs {
 	@Secured
 	@Path("/{id}/calculate-amount")
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response add(@PathParam("id") final UUID id, final ProductAmountsCmd cmd) throws IOException {
+	public Response calculateAmount(@PathParam("id") final UUID id, final ProductAmountsCmd cmd) throws IOException {
 		
-		return createNonTransactionalHttpResponse(
+		return createHttpResponse(
 				new Callable<Response>(){
 					@Override
 					public Response call() throws IOException {
 						
 						Product product = sales().products().get(id);
-						ProductAmounts amounts = product.evaluatePrice(cmd.quantity(), 0, cmd.reductionAmount(), cmd.orderDate(), true);
+						List<Tax> taxes = new ArrayList<Tax>();
+						for (TaxEdited tax : cmd.taxes()) {
+							taxes.add(sales().taxes().get(tax.id()));
+						}
 						
-						return Response.ok(new ProductAmountsVm(amounts)).build();
+						OrderProduct orderProduct = product.generate(cmd.quantity(), cmd.orderDate(), cmd.unitPrice(), taxes);
+						
+						return Response.ok(new OrderProductVm(orderProduct)).build();
 					}
 				});		
 	}
@@ -333,10 +371,13 @@ public class ProductRs extends SalesBaseRs {
 					@Override
 					public Response call() throws IOException {
 						
+						ProductCategory category = sales().productCategories().build(cmd.categoryId());
 						Product item = sales().products().get(id);
 						MesureUnit unit = sales().mesureUnits().get(cmd.mesureUnitId());
-						item.update(cmd.name(), cmd.barCode(), cmd.description(), unit);
 						
+						item.update(cmd.name(), cmd.internalReference(), cmd.barCode(), category, cmd.description(), unit, cmd.emballage(), cmd.quantity());
+						
+						log.info(String.format("Mise à jour des données du produit %s", item.name()));
 						return Response.status(Response.Status.OK).build();
 					}
 				});		
@@ -354,8 +395,10 @@ public class ProductRs extends SalesBaseRs {
 					public Response call() throws IOException {
 						
 						Product item = sales().products().get(id);
+						String name = item.name();
 						sales().products().delete(item);
 						
+						log.info(String.format("Suppression du produit %s", name));
 						return Response.status(Response.Status.OK).build();
 					}
 				});	
@@ -377,6 +420,7 @@ public class ProductRs extends SalesBaseRs {
 						
 						product.taxes().delete(tax);
 						
+						log.info(String.format("Retrait de la taxe %s sur le produit %s", tax.name(), product.name()));
 						return Response.status(Response.Status.OK).build();
 					}
 				});	

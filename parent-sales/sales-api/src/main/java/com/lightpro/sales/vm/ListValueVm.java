@@ -4,7 +4,8 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 
-public class ListValueVm {
+public final class ListValueVm {
+	
 	private final transient int id;
 	private final transient String name;
 	

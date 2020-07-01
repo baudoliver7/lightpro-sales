@@ -2,12 +2,12 @@ package com.sales.domains.api;
 
 public enum PurchaseOrderStatus {
 	
-	ANNULE(0, "Annulé"),
-	DRAFT(1, "Brouillon"), 
-	DEVIS_ENVOYE(2, "Devis envoyé"), 
+	NONE(0, "Non défini"),
+	CREATED(1, "Créée"), 
 	COMMANDE_CLIENT(3, "Commande client"),
 	ENTIRELY_INVOICED(4, "Commande entièrement facturée"),
-	TERMINE(5, "Terminé");
+	PAID(5, "Commande réglée"),
+	CANCELLED(6, "Commande annulée");
 	
 	private final int id;
 	private final String name;
@@ -19,7 +19,7 @@ public enum PurchaseOrderStatus {
 	
 	public static PurchaseOrderStatus get(int id){
 		
-		PurchaseOrderStatus value = PurchaseOrderStatus.ANNULE;
+		PurchaseOrderStatus value = PurchaseOrderStatus.NONE;
 		for (PurchaseOrderStatus item : PurchaseOrderStatus.values()) {
 			if(item.id() == id)
 				value = item;

@@ -5,30 +5,35 @@ import java.util.UUID;
 
 import com.securities.api.Tax;
 
-public class TaxVm {
-	private final transient Tax origin;
+public final class TaxVm {
+	
+	public final String type;
+	public final int typeId;
+	public final UUID id;
+	public final String name;
+	public final String shortName;
+	public final double value;
+	public final int valueTypeId;
+	public final String valueSummary;
+	public final String resumeName;
 	
 	public TaxVm(){
 		throw new UnsupportedOperationException("#TaxVm()");
 	}
 		
 	public TaxVm(Tax origin){
-		this.origin = origin;
+		try {
+			this.id = origin.id();
+			this.name = origin.name();
+			this.shortName = origin.shortName();
+	        this.value = origin.value();
+	        this.valueTypeId = origin.valueType().id();
+	        this.type = origin.type().toString();
+	        this.typeId = origin.type().id();
+	        this.valueSummary = origin.valueToString();
+	        this.resumeName = origin.toString();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}	
 	}
-	
-	public UUID getId(){
-		return this.origin.id();
-	}
-	
-	public String getName() throws IOException {
-		return this.origin.name();
-	}
-	
-	public String getShortName() throws IOException {
-		return this.origin.shortName();
-	}
-	
-	public int getRate() throws IOException {
-		return this.origin.rate();
-	}	
 }

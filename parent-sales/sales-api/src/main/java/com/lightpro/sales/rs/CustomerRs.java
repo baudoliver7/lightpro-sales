@@ -6,10 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -18,10 +15,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.infrastructure.core.PaginationSet;
-import com.lightpro.sales.cmd.CustomerEdited;
+import com.infrastructure.core.UseCode;
 import com.lightpro.sales.vm.CustomerVm;
+import com.lightpro.sales.vm.ProvisionVm;
 import com.sales.domains.api.Customer;
 import com.sales.domains.api.Customers;
+import com.sales.domains.api.Provisions;
 import com.securities.api.Secured;
 
 @Path("/customer")
@@ -37,9 +36,31 @@ public class CustomerRs extends SalesBaseRs {
 					@Override
 					public Response call() throws IOException {
 						
-						List<CustomerVm> items = sales().customers().all()
+						List<CustomerVm> items = sales().customers().of(UseCode.USER).all()
 													 .stream()
 											 		 .map(m -> new CustomerVm(m))
+											 		 .collect(Collectors.toList());
+
+						return Response.ok(items).build();
+					}
+				});			
+	}
+	
+	@GET
+	@Secured
+	@Path("/{id}/provision/available")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response getAllAvailableProvisions(@PathParam("id") final UUID id) throws IOException {	
+		
+		return createHttpResponse(
+				new Callable<Response>(){
+					@Override
+					public Response call() throws IOException {
+						
+						Customer customer = sales().customers().get(id);
+						List<ProvisionVm> items = customer.provisions().all()
+													 .stream()
+											 		 .map(m -> new ProvisionVm(m))
 											 		 .collect(Collectors.toList());
 
 						return Response.ok(items).build();
@@ -60,14 +81,44 @@ public class CustomerRs extends SalesBaseRs {
 					@Override
 					public Response call() throws IOException {
 						
-						Customers container = sales().customers();
+						Customers container = sales().customers().of(UseCode.USER);
 						
 						List<CustomerVm> itemsVm = container.find(page, pageSize, filter).stream()
 															 .map(m -> new CustomerVm(m))
 															 .collect(Collectors.toList());
 													
-						int count = container.totalCount(filter);
+						long count = container.count(filter);
 						PaginationSet<CustomerVm> pagedSet = new PaginationSet<CustomerVm>(itemsVm, page, count);
+						
+						return Response.ok(pagedSet).build();
+					}
+				});	
+				
+	}
+	
+	@GET
+	@Secured
+	@Path("/{id}/provision/search")
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response searchProvision( @PathParam("id") final UUID id,
+						    @QueryParam("page") int page, 
+							@QueryParam("pageSize") int pageSize, 
+							@QueryParam("filter") String filter) throws IOException {
+		
+		return createHttpResponse(
+				new Callable<Response>(){
+					@Override
+					public Response call() throws IOException {
+						
+						Customer customer = sales().customers().of(UseCode.USER).get(id);
+						Provisions container = customer.provisions();
+						
+						List<ProvisionVm> itemsVm = container.find(page, pageSize, filter).stream()
+															 .map(m -> new ProvisionVm(m))
+															 .collect(Collectors.toList());
+													
+						long count = container.count(filter);
+						PaginationSet<ProvisionVm> pagedSet = new PaginationSet<ProvisionVm>(itemsVm, page, count);
 						
 						return Response.ok(pagedSet).build();
 					}
@@ -91,68 +142,5 @@ public class CustomerRs extends SalesBaseRs {
 						return Response.ok(item).build();
 					}
 				});		
-	}
-	
-	@POST
-	@Secured
-	@Produces({MediaType.APPLICATION_JSON})
-	public Response add(final CustomerEdited cmd) throws IOException {
-		
-		return createHttpResponse(
-				new Callable<Response>(){
-					@Override
-					public Response call() throws IOException {
-						
-						Customers customers = sales().customers();
-						Customer customer = customers.build(cmd.id());
-						
-						if (!customer.isPresent() && customer.isPresentAsPerson()){
-							customer = customers.addPerson(customer);	
-							customer.update(cmd.firstName(), cmd.lastName(), cmd.sex(), cmd.address(), cmd.birthDate(), cmd.tel1(), cmd.tel2(), cmd.email(), cmd.photo());
-						} else {
-							customer = customers.add(cmd.firstName(), cmd.lastName(), cmd.sex(), cmd.address(), cmd.birthDate(), cmd.tel1(), cmd.tel2(), cmd.email(), cmd.photo());
-						}
-						
-						return Response.ok(new CustomerVm(customer)).build();
-					}
-				});		
-	}
-	
-	@PUT
-	@Secured
-	@Path("/{id}")
-	@Produces({MediaType.APPLICATION_JSON})
-	public Response update(@PathParam("id") final UUID id, final CustomerEdited cmd) throws IOException {
-		
-		return createHttpResponse(
-				new Callable<Response>(){
-					@Override
-					public Response call() throws IOException {
-						
-						Customer item = sales().customers().get(id);
-						item.update(cmd.firstName(), cmd.lastName(), cmd.sex(), cmd.address(), cmd.birthDate(), cmd.tel1(), cmd.tel2(), cmd.email(), cmd.photo());
-						
-						return Response.ok(new CustomerVm(item)).build();
-					}
-				});		
-	}
-	
-	@DELETE
-	@Secured
-	@Path("/{id}")
-	@Produces({MediaType.APPLICATION_JSON})
-	public Response delete(@PathParam("id") final UUID id) throws IOException {
-		
-		return createHttpResponse(
-				new Callable<Response>(){
-					@Override
-					public Response call() throws IOException {
-						
-						Customer item = sales().customers().get(id);
-						sales().customers().delete(item);
-						
-						return Response.status(Response.Status.OK).build();
-					}
-				});	
 	}
 }

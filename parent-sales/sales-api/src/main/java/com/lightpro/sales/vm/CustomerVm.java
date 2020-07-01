@@ -1,76 +1,47 @@
 package com.lightpro.sales.vm;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.sales.domains.api.Customer;
 
-public class CustomerVm {
+public final class CustomerVm {
 	
-	private final transient Customer origin;
+	public final UUID id;
+	public final String name;
+	public final String locationAddress;
+	public final String phone;
+	public final String mobile;
+	public final String fax;
+	public final String mail;
+	public final String poBox;
+	public final String webSite;
+	public final String photo;
+	public final int natureId;
+	public final String nature;	
+	public final double provisionAvailableAmount;
 	
 	public CustomerVm(){
 		throw new UnsupportedOperationException("#CustomerVm()");
 	}
 	
-	public CustomerVm(final Customer origin) {
-        this.origin = origin;
+	public CustomerVm(final Customer contact) {
+		try {
+			this.id = contact.id();
+	        this.name = contact.name();
+	        this.locationAddress = contact.locationAddress();
+	        this.phone = contact.phone();
+	        this.mobile = contact.mobile();
+	        this.fax = contact.fax();
+	        this.mail = contact.mail();
+	        this.poBox = contact.poBox();
+	        this.webSite = contact.webSite();
+	        this.photo = contact.photo();
+	        this.natureId = contact.nature().id();
+	        this.nature = contact.nature().toString();
+	        this.provisionAvailableAmount = contact.provisions().totalAvailableAmount();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}	
     }
-	
-	@JsonGetter
-	public UUID getId(){
-		return origin.id();
-	}
-	
-	@JsonGetter
-	public String getFirstName() throws IOException {
-		return origin.firstName();
-	}
-	
-	@JsonGetter
-	public String getLastName() throws IOException {
-		return origin.lastName();
-	}
-	
-	@JsonGetter
-	public String getFullName() throws IOException {
-		return origin.fullName();
-	}
-	
-	@JsonGetter
-	public String getSex() throws IOException{
-		return origin.sex().name();
-	}
-	
-	@JsonGetter
-	public String getAddress() throws IOException {
-		return origin.address();
-	}
-	
-	@JsonGetter
-	public LocalDate getBirthDate() throws IOException {
-		return origin.birthDate();
-	}
-	
-	@JsonGetter
-	public String getTel1() throws IOException {
-		return origin.tel1();
-	}
-	
-	@JsonGetter
-	public String getTel2() throws IOException{
-		return origin.tel2();
-	}
-	
-	@JsonGetter
-	public String getEmail() throws IOException {
-		return origin.email();
-	}
-	
-	@JsonGetter
-	public String getPhoto() throws IOException {
-		return origin.photo();
-	}
 }

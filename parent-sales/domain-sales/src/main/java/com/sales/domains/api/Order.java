@@ -4,17 +4,19 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.infrastructure.core.Recordable;
+import com.infrastructure.core.Nonable;
+import com.securities.api.Contact;
 
-public interface Order extends Recordable<UUID, Order> {
+public interface Order extends Nonable {
+	UUID id();
+	String title() throws IOException;
 	LocalDate orderDate() throws IOException;
 	String reference() throws IOException;
-	double totalAmountHt() throws IOException;
-	double totalTaxAmount() throws IOException;
-	double totalAmountTtc() throws IOException;	
+	String description() throws IOException;
+	SaleAmount saleAmount() throws IOException;
 	String notes() throws IOException;
-	Customer customer() throws IOException;	
-	OrderProducts products() throws IOException;
-	
-	void updateAmounts() throws IOException;
+	Contact customer() throws IOException;	
+    SaleTaxes taxes() throws IOException;
+    Sales module() throws IOException;
+	void updateAmounts() throws IOException;	
 }

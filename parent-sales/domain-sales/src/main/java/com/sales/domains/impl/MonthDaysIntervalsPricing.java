@@ -10,7 +10,7 @@ import com.sales.domains.api.IntervalsPricing;
 import com.sales.domains.api.PriceType;
 import com.sales.domains.api.Pricing;
 
-public class MonthDaysIntervalsPricing implements IntervalsPricing {
+public final class MonthDaysIntervalsPricing implements IntervalsPricing {
 
 	private final transient IntervalsPricing origin;
 	
@@ -28,17 +28,14 @@ public class MonthDaysIntervalsPricing implements IntervalsPricing {
 		
 		return summary;
 	}
-	
-	/**
-	 * param1 = Jour; param2 = Mois; param3 = Année
-	 */
+
 	@Override
-	public double evaluatePrice(int quantity, double reductionAmount, LocalDate orderDate) throws IOException {
+	public double evaluatePrice(double quantity, LocalDate orderDate) throws IOException {
 		
 		double price = 0;
 		
 		for (IntervalPricing ip : all()) {
-			price += ip.evaluatePrice(quantity, reductionAmount, orderDate);
+			price += ip.evaluatePrice(quantity, orderDate);
 		}
 		
 		return price;
@@ -55,11 +52,11 @@ public class MonthDaysIntervalsPricing implements IntervalsPricing {
 	}
 
 	@Override
-	public IntervalPricing add(int begin, int end, double price, PriceType priceType) throws IOException {
+	public IntervalPricing add(double begin, double end, double price, PriceType priceType, boolean taxNotApplied) throws IOException {
 		
 		MonthDaysIntervalPricing.validate(begin, end, price, priceType);		
 		
-		return new MonthDaysIntervalPricing(origin.add(begin, end, price, priceType));
+		return new MonthDaysIntervalPricing(origin.add(begin, end, price, priceType, taxNotApplied));
 	}
 
 	@Override
@@ -73,12 +70,56 @@ public class MonthDaysIntervalsPricing implements IntervalsPricing {
 	}
 
 	@Override
-	public IntervalPricing build(UUID id) throws IOException {
+	public IntervalPricing build(UUID id) {
 		return new MonthDaysIntervalPricing(origin.build(id));
 	}
 
 	@Override
 	public IntervalPricing get(UUID id) throws IOException {
 		return origin.get(id);
+	}
+
+	@Override
+	public double evaluateUnitPrice(double quantity, LocalDate orderDate) throws IOException {
+		return origin.evaluateUnitPrice(quantity, orderDate);
+	}
+
+	@Override
+	public double evaluateTaxAmount(double quantity, double amountHt) throws IOException {
+		return origin.evaluateTaxAmount(quantity, amountHt);
+	}
+
+	@Override
+	public boolean contains(IntervalPricing item) {
+		try {
+			return all().stream().anyMatch(m -> m.equals(item));
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public long count() throws IOException {
+		return all().size();
+	}
+
+	@Override
+	public IntervalPricing first() throws IOException {
+		return all().get(0);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		try {
+			return all().isEmpty();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public IntervalPricing last() throws IOException {
+		int size = all().size();
+		return all().get(size - 1);
 	}
 }

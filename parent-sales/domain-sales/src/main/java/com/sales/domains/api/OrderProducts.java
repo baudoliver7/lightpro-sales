@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.UUID;
 
 import com.infrastructure.core.Queryable;
-import com.infrastructure.core.Updatable;
+import com.securities.api.Tax;
 
-public interface OrderProducts extends Queryable<OrderProduct, UUID>, Updatable<OrderProduct> {
-	List<OrderProduct> all() throws IOException;
+public interface OrderProducts extends Queryable<OrderProduct, UUID> {
 	Order order() throws IOException;
 	
-	OrderProduct add(int quantity, double unitPrice, double reductionAmount, String description, Product product, boolean withTax) throws IOException;
+	OrderProduct add(ProductCategory category, Product product, String name, String description, double quantity, double unitPrice, Remise remise, List<Tax> taxes) throws IOException;	
+	OrderProduct add(ProductCategory category, Product product, String name, String description, double quantity, double unitPrice, Remise remise, List<Tax> taxes, Product originProduct) throws IOException;
+	OrderProduct add(UUID id, ProductCategory category, Product product, String name, String description, double quantity, double unitPrice, Remise remise, List<Tax> taxes, Product originProduct) throws IOException;
+	
+	OrderProduct add(OrderProduct product) throws IOException;
 	void deleteAll() throws IOException;
 }

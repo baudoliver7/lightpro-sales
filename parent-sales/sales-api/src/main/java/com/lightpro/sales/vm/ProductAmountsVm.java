@@ -2,42 +2,27 @@ package com.lightpro.sales.vm;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.sales.domains.api.ProductAmounts;
+import com.sales.domains.impl.ProductSaleAmount;
 
-public class ProductAmountsVm {
-	private final transient ProductAmounts origin;
+public final class ProductAmountsVm {
+	
+	public final double totalAmountHt;
+	public final double netCommercial;
+	public final double totalTaxAmount;
+	public final double totalAmountTtc;
 	
 	public ProductAmountsVm(){
 		throw new UnsupportedOperationException("#ProductAmountsVm()");
 	}
 	
-	public ProductAmountsVm(final ProductAmounts origin) {
-        this.origin = origin;
+	public ProductAmountsVm(final ProductSaleAmount origin) {
+		try {
+			this.totalAmountHt = origin.totalAmountHt();
+	        this.netCommercial = origin.netCommercial();
+	        this.totalTaxAmount = origin.totalTaxAmount();
+	        this.totalAmountTtc = origin.totalAmountTtc();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}	
     }
-	
-	@JsonGetter
-	public double getUnitPrice(){
-		return origin.unitPrice();
-	}
-	
-	@JsonGetter
-	public double getUnitPriceApplied(){
-		return origin.unitPriceApplied();
-	}
-	
-	@JsonGetter
-	public double getTotalAmountHt() throws IOException {
-		return origin.totalAmountHt();
-	}
-	
-	@JsonGetter
-	public double getTotalTaxAmount() throws IOException {
-		return origin.totalTaxAmount();
-	}
-	
-	@JsonGetter
-	public double getTotalAmountTtc() throws IOException {
-		return origin.totalAmountTtc();
-	}
 }

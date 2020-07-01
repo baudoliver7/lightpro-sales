@@ -1,28 +1,17 @@
 package com.lightpro.sales.vm;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.sales.domains.api.PricingMode;
 
-public class PricingModeVm {
-	private final transient PricingMode origin;
+public final class PricingModeVm {
+	public final int id;
+	public final String name;
 	
 	public PricingModeVm(){
 		throw new UnsupportedOperationException("#PricingModeVm()");
 	}
 	
 	public PricingModeVm(final PricingMode origin) {
-        this.origin = origin;
+		this.id = origin.id();
+        this.name = origin.toString();
     }
-	
-	@JsonGetter
-	public int getId(){
-		return origin.id();
-	}
-	
-	@JsonGetter
-	public String getName() throws IOException {
-		return origin.toString();
-	}
 }

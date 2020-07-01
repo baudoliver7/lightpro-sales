@@ -35,10 +35,6 @@ public class OrderProductMetadata implements DomainMetadata {
 		return "unitprice";
 	}	
 	
-	public String unitPriceAppliedKey(){
-		return "unitpriceapplied";
-	}	
-	
 	public String reductionAmountKey(){
 		return "reductionamount";
 	}	
@@ -69,6 +65,30 @@ public class OrderProductMetadata implements DomainMetadata {
 	
 	public String descriptionKey(){
 		return "description";
+	}
+	
+	public String netCommercialKey(){
+		return "net_commercial";
+	}
+	
+	public String categoryIdKey(){
+		return "categoryid";
+	}
+	
+	public String deductibleKey(){
+		return "deductible";
+	}
+	
+	public String originProductId(){
+		return "origin_productid";
+	}
+	
+	public String reduceValueKey(){
+		return "reduce_value";
+	}
+	
+	public String reduceValueTypeIdKey(){
+		return "reduce_value_typeid";
 	}
 	
 	public static OrderProductMetadata create(){

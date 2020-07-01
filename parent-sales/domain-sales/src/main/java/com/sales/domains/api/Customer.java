@@ -1,7 +1,10 @@
 package com.sales.domains.api;
 
-import com.securities.api.Person;
+import java.io.IOException;
 
-public interface Customer extends Person {
-	boolean isPresentAsPerson();
+import com.securities.api.Contact;
+
+public interface Customer extends Contact {
+	Sales module() throws IOException;
+	Provisions provisions() throws IOException;
 }

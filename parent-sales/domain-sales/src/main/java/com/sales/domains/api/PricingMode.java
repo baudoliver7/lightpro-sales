@@ -4,7 +4,8 @@ public enum PricingMode {
 	NONE(0, "Non défini"),
 	FIX(1, "Prix fixe"), 
 	TRANCHE_SIMPLE(2, "Tranche simple"), 
-	TRANCHE_MONTH_DAYS(3, "Tranche jours mois");
+	TRANCHE_MONTH_DAYS(3, "Tranche jours mois"),
+	KNOWN_IN_SALING(4, "Déterminé à la vente");
 	
 	private final int id;
 	private final String name;

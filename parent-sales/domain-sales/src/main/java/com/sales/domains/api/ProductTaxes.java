@@ -10,5 +10,5 @@ public interface ProductTaxes {
 	void add(Tax item) throws IOException;
 	void delete(Tax item) throws IOException;
 	void deleteAll() throws IOException;
-	double evaluateTaxAmount(double amountHt) throws IOException;
+	double evaluateAmount(double amountHt) throws IOException;
 }

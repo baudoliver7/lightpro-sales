@@ -2,124 +2,99 @@ package com.lightpro.sales.vm;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.sales.domains.api.Invoice;
 
-public class InvoiceVm {
-	private final transient Invoice origin;
+public final class InvoiceVm {
+	
+	public final UUID id;
+	public final LocalDate orderDate;
+	public final LocalDate dueDate;
+	public final String paymentCondition;
+	public final String origin;
+	public final int paymentConditionId;
+	public final String reference;
+	public final double totalAmountHt;
+	public final double totalTaxAmount;
+	public final double totalAmountTtc;
+	public final double leftAmountToPay;
+	public final double totalAmountPaid;
+	public final String description;
+	public final String notes;
+	public final UUID customerId;
+	public final String customer;
+	public final UUID sellerId;
+	public final String seller;
+	public final UUID modulePdvId;
+	public final String modulePdv;
+	public final int numberOfProducts;
+	public final String status;
+	public final int statusId;
+	public final String step;
+	public final int stepId;
+	public final String type;
+	public final int typeId;
+	public final String nature;
+	public final int natureId;
+	public final UUID purchaseOrderId;
+	public final String purchaseOrder;
+	public final double netCommercial;
+	public double reduceAmount;
+	public double avoirAmount;
+	public double totalAmountRembourse;
+	public double solde;
+	public String title;
+	public List<SaleTaxVm> taxes;
 	
 	public InvoiceVm(){
 		throw new UnsupportedOperationException("#InvoiceVm()");
 	}
 	
 	public InvoiceVm(final Invoice origin) {
-        this.origin = origin;
+		try {
+			this.id = origin.id();
+			this.orderDate = origin.orderDate();
+			this.dueDate = origin.dueDate();
+			this.paymentCondition = origin.paymentCondition().toString();
+			this.origin = origin.origin();
+			this.paymentConditionId = origin.paymentCondition().id();
+			this.reference = origin.reference();
+			this.totalAmountHt = origin.saleAmount().totalAmountHt();
+			this.totalTaxAmount = origin.saleAmount().totalTaxAmount();
+			this.totalAmountTtc = origin.saleAmount().totalAmountTtc();
+			this.leftAmountToPay = origin.leftAmountToPay();
+			this.totalAmountPaid = origin.totalAmountPaid();
+			this.description = origin.description();
+			this.notes = origin.notes();
+			this.customerId = origin.customer().id();
+			this.customer = origin.customer().name();
+			this.sellerId = origin.seller().id();
+			this.seller = origin.seller().name();
+			this.modulePdvId = origin.modulePdv().id();
+			this.modulePdv = origin.modulePdv().name();
+			this.numberOfProducts = origin.products().all().size();
+			this.status = origin.status().toString();
+			this.statusId = origin.status().id();
+			this.step = origin.step().toString();
+			this.stepId = origin.step().id();
+			this.type = origin.type().toString();
+			this.typeId = origin.type().id();
+			this.nature = origin.nature().toString();
+			this.natureId = origin.nature().id();
+			this.purchaseOrderId = origin.purchaseOrder().id();
+			this.purchaseOrder = origin.purchaseOrder().reference();
+			this.netCommercial = origin.saleAmount().netCommercial();
+			this.reduceAmount = origin.saleAmount().reduceAmount();
+			this.avoirAmount = origin.avoirAmount();
+			this.totalAmountRembourse = origin.totalAmountRembourse();
+			this.solde = origin.solde();
+			this.title = origin.title();
+			this.taxes = origin.taxes().all().stream().map(m -> new SaleTaxVm(m)).collect(Collectors.toList());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}	
     }
-	
-	@JsonGetter
-	public UUID getId(){
-		return origin.id();
-	}
-	
-	@JsonGetter
-	public LocalDate getOrderDate() throws IOException {
-		return origin.orderDate();
-	}
-	
-	@JsonGetter
-	public LocalDate getDueDate() throws IOException {
-		return origin.dueDate();
-	}
-	
-	@JsonGetter
-	public String getPaymentCondition() throws IOException {
-		return origin.paymentCondition().toString();
-	}
-	
-	@JsonGetter
-	public String getOrigin() throws IOException {
-		return origin.origin();
-	}
-	
-	@JsonGetter
-	public int getPaymentConditionId() throws IOException {
-		return origin.paymentCondition().id();
-	}
-	
-	@JsonGetter
-	public String getReference() throws IOException {
-		return origin.reference();
-	}
-	
-	@JsonGetter
-	public double getTotalAmountHt() throws IOException {
-		return origin.totalAmountHt();
-	}
-	
-	@JsonGetter
-	public double getTotalTaxAmount() throws IOException {
-		return origin.totalTaxAmount();
-	}
-	
-	@JsonGetter
-	public double getTotalAmountTtc() throws IOException {
-		return origin.totalAmountTtc();
-	}
-	
-	@JsonGetter
-	public double getLeftAmountToPay() throws IOException {
-		return origin.leftAmountToPay();
-	}
-	
-	@JsonGetter
-	public double getTotalAmountPaid() throws IOException {
-		return origin.totalAmountPaid();
-	}
-	
-	@JsonGetter
-	public String description() throws IOException {
-		return origin.description();
-	}
-	
-	@JsonGetter
-	public String notes() throws IOException {
-		return origin.notes();
-	}
-	
-	@JsonGetter
-	public UUID getCustomerId() throws IOException {
-		return origin.customer().id();
-	}
-	
-	@JsonGetter
-	public String getCustomer() throws IOException {
-		return origin.customer().fullName();
-	}
-	
-	@JsonGetter
-	public int getNumberOfProducts() throws IOException {
-		return origin.products().all().size();
-	}
-	
-	@JsonGetter
-	public String getStatus() throws IOException {
-		return origin.status().toString();
-	}
-	
-	@JsonGetter
-	public int getStatusId() throws IOException {
-		return origin.status().id();
-	}
-	
-	@JsonGetter
-	public UUID getPurchaseOrderId() throws IOException {
-		return origin.purchaseOrder().id();
-	}
-	
-	@JsonGetter
-	public String getPurchaseOrder() throws IOException {
-		return origin.purchaseOrder().reference();
-	}
 }

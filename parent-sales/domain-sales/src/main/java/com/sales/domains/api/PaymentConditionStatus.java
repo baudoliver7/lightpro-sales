@@ -1,7 +1,8 @@
 package com.sales.domains.api;
 
 public enum PaymentConditionStatus {
-	DIRECT_PAYMENT(0, "Paiement immédiat", 0),
+	NONE(0, "Non défini", -1),
+	DIRECT_PAYMENT(4, "Paiement immédiat", 0),
 	DAYS_10NET(1, "10 jours nets", 10), 
 	DAYS_15NET(2, "15 jours nets", 15), 
 	DAYS_30NET(3, "30 jours nets", 30);
@@ -18,7 +19,7 @@ public enum PaymentConditionStatus {
 	
 	public static PaymentConditionStatus get(int id){
 		
-		PaymentConditionStatus value = PaymentConditionStatus.DIRECT_PAYMENT;
+		PaymentConditionStatus value = PaymentConditionStatus.NONE;
 		for (PaymentConditionStatus item : PaymentConditionStatus.values()) {
 			if(item.id() == id)
 				value = item;

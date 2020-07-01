@@ -47,6 +47,10 @@ public class IntervalPricingMetadata implements DomainMetadata {
 		return "pricetypeid";
 	}
 	
+	public String taxNotAppliedKey(){
+		return "tax_notapplied";
+	}
+	
 	public static IntervalPricingMetadata create(){
 		return new IntervalPricingMetadata();
 	}

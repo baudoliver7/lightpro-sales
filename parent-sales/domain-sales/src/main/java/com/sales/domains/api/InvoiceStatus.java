@@ -2,9 +2,11 @@ package com.sales.domains.api;
 
 public enum InvoiceStatus {
 	
-	NONE(0, "Non défini"), 
+	NONE(0, "Non défini"),
+	DRAFT(4, "Brouillon"),
 	OPENED(1, "Ouverte"), 
-	PAID(2, "Payée");
+	PAID(2, "Payée"),
+	GET_RID(3, "Abandonnée");
 	
 	private final int id;
 	private final String name;

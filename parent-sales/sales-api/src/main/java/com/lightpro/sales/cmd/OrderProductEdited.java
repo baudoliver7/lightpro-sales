@@ -1,44 +1,43 @@
 package com.lightpro.sales.cmd;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OrderProductEdited {
 	
-	private final UUID id;
-	private final int quantity;
+	private final double quantity;
 	private final double unitPrice;
-	private final double reductionAmount;
+	private final String name;
+	private final String description;
 	private final UUID productId;
-	private final boolean deleted;
+	private final List<TaxEdited> taxes;
 	
 	public OrderProductEdited(){
 		throw new UnsupportedOperationException("#OrderProductEdited()");
 	}
 	
 	@JsonCreator
-	public OrderProductEdited(@JsonProperty("id") final UUID id,
-							  @JsonProperty("quantity") final int quantity, 
-					    	  @JsonProperty("unitPrice") final double unitPrice,
-					    	  @JsonProperty("reductionAmount") final double reductionAmount,
+	public OrderProductEdited(@JsonProperty("quantity") final double quantity, 
+							  @JsonProperty("unitPrice") final double unitPrice,
+							  @JsonProperty("name") final String name,
+							  @JsonProperty("description") final String description,
 					    	  @JsonProperty("productId") final UUID productId,
-					    	  @JsonProperty("deleted") final boolean deleted){
+					    	  @JsonProperty("taxes") final List<TaxEdited> taxes){
 		
-		this.id = id;
 		this.quantity = quantity;
 		this.unitPrice = unitPrice;
-		this.reductionAmount = reductionAmount;
+		this.name = name;
 		this.productId = productId;
-		this.deleted = deleted;
+		this.description = description;
+		this.taxes = taxes;
 	}
 	
-	public UUID id(){
-		return id;
-	}
-	
-	public int quantity(){
+	public double quantity(){
 		return quantity;
 	}
 	
@@ -46,15 +45,20 @@ public class OrderProductEdited {
 		return unitPrice;
 	}
 	
-	public double reductionAmount(){
-		return reductionAmount;
+	public String description(){
+		return description;
+	}
+	
+	public String name(){
+		return name;
 	}
 	
 	public UUID productId(){
 		return productId;
 	}
 	
-	public boolean deleted(){
-		return deleted;
+	@JsonGetter
+	public List<TaxEdited> taxes() throws IOException {
+		return taxes;
 	}
 }

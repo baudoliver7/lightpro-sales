@@ -4,21 +4,20 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 
-public class ResumeSalesVm {
+public final class ResumeSalesVm {
 	
 	private final transient double invoiced;
 	private final transient double turnover;
-	private final transient double inCirculation;
+	private final transient double returnAmount;
 	
 	public ResumeSalesVm(){
 		throw new UnsupportedOperationException("#ResumeSalesVm()");
 	}
 	
-	public ResumeSalesVm(final double invoiced, final double turnover, final double inCirculation) {
-		
+	public ResumeSalesVm(final double invoiced, final double turnover, final double returnAmount) {		
         this.invoiced = invoiced;
         this.turnover = turnover;
-        this.inCirculation = inCirculation;
+        this.returnAmount = returnAmount;
     }
 	
 	@JsonGetter
@@ -32,7 +31,7 @@ public class ResumeSalesVm {
 	}
 	
 	@JsonGetter
-	public double inCirculation() throws IOException {
-		return inCirculation;
+	public double returnAmount() throws IOException {
+		return returnAmount;
 	}
 }

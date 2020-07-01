@@ -33,7 +33,7 @@ public class ProductMetadata implements DomainMetadata {
 	
 	public String barCodeKey(){
 		return "barcode";
-	}
+	}	
 	
 	public String descriptionKey(){
 		return "description";
@@ -45,5 +45,33 @@ public class ProductMetadata implements DomainMetadata {
 	
 	public String moduleIdKey(){
 		return "moduleid";
-	}	
+	}		
+	
+	public String emballageKey(){
+		return "emballage";
+	}
+	
+	public String quantityKey(){
+		return "quantity";
+	}
+	
+	public String categoryIdKey(){
+		return "categoryid";
+	}
+	
+	public String manageStockKey(){
+		return "manage_stock";
+	}
+	
+	public String articleIdKey(){
+		return "articleid";
+	}
+	
+	public String internalReferenceKey(){
+		return "internal_reference";
+	}
+	
+	public static ProductMetadata create(){
+		return new ProductMetadata();
+	}
 }

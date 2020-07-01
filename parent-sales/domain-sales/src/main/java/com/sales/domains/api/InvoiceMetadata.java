@@ -59,14 +59,6 @@ public class InvoiceMetadata implements DomainMetadata {
 		return "totalamountttc";
 	}
 	
-	public String leftAmountToPayKey(){
-		return "leftamounttopay";
-	}	
-	
-	public String totalAmountPaidKey(){
-		return "totalamountpaid";
-	}
-	
 	public String descriptionKey(){
 		return "description";
 	}
@@ -85,6 +77,46 @@ public class InvoiceMetadata implements DomainMetadata {
 	
 	public String invoiceTypeIdKey(){
 		return "invoicetypeid";
+	}
+	
+	public String moduleIdKey(){
+		return "moduleid";
+	}
+	
+	public String customerIdKey(){
+		return "customerid";
+	}
+	
+	public String sellerIdKey(){
+		return "sellerid";
+	}
+	
+	public String modulePdvIdKey(){
+		return "module_pdvid";
+	}	
+	
+	public String stepKey(){
+		return "step";
+	}
+	
+	public String netCommercialKey(){
+		return "net_commercial";
+	}
+	
+	public String reduceAmountKey(){
+		return "reductionamount";
+	}
+	
+	public String natureIdKey(){
+		return "natureid";
+	}
+	
+	public String originInvoiceIdKey(){
+		return "origin_invoiceid";
+	}
+	
+	public String teamIdKey(){
+		return "teamid";
 	}
 	
 	public static InvoiceMetadata create(){

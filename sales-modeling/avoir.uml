@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_o8adQDSaEeeClve-L1nqnQ" name="NewModel">
+  <packagedElement xmi:type="uml:Interface" xmi:id="_3_EkIDSaEeeClve-L1nqnQ" name="Facture">
+    <ownedOperation xmi:id="_LrpfoDSfEeeClve-L1nqnQ" name="type"/>
+    <ownedOperation xmi:id="_He1EcDSgEeeClve-L1nqnQ" name="description"/>
+    <ownedOperation xmi:id="_KCukkDSgEeeClve-L1nqnQ" name="notes"/>
+    <ownedOperation xmi:id="_y7JlADSfEeeClve-L1nqnQ" name="netCommercial"/>
+    <ownedOperation xmi:id="_Os2xYDSgEeeClve-L1nqnQ" name="taxes"/>
+    <ownedOperation xmi:id="_lwH4sDSgEeeClve-L1nqnQ" name="montantTtc"/>
+    <ownedOperation xmi:id="_F2gmUDShEeeClve-L1nqnQ" name="reference"/>
+    <ownedOperation xmi:id="_G5peUDShEeeClve-L1nqnQ" name="client"/>
+    <ownedOperation xmi:id="_IB9KMDShEeeClve-L1nqnQ" name="fournisseur"/>
+    <ownedOperation xmi:id="_QVEP4DShEeeClve-L1nqnQ" name="contactClient"/>
+    <ownedOperation xmi:id="_VycekDShEeeClve-L1nqnQ" name="vendeur"/>
+    <ownedOperation xmi:id="_htFEkDShEeeClve-L1nqnQ" name="dateEcheance"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_6dwNEDSaEeeClve-L1nqnQ" name="Ligne">
+    <ownedOperation xmi:id="_cLPbYDSbEeeClve-L1nqnQ" name="produit"/>
+    <ownedOperation xmi:id="_DDf64DSbEeeClve-L1nqnQ" name="libelle"/>
+    <ownedOperation xmi:id="_EhKywDSbEeeClve-L1nqnQ" name="description"/>
+    <ownedOperation xmi:id="_FmWSIDSbEeeClve-L1nqnQ" name="quantite"/>
+    <ownedOperation xmi:id="_3fSbYDSbEeeClve-L1nqnQ" name="unite"/>
+    <ownedOperation xmi:id="_HGVeMDSbEeeClve-L1nqnQ" name="prixUnitaireHt"/>
+    <ownedOperation xmi:id="_5-EOIDSfEeeClve-L1nqnQ" name="montantHt"/>
+    <ownedOperation xmi:id="_NMC4MDSbEeeClve-L1nqnQ" name="remise"/>
+    <ownedOperation xmi:id="_oioO0DSbEeeClve-L1nqnQ" name="netCommercial"/>
+    <ownedOperation xmi:id="_tGNnYDSeEeeClve-L1nqnQ" name="taxes"/>
+    <ownedOperation xmi:id="_A92gMDSfEeeClve-L1nqnQ" name="montantTtc"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="__nV9EDSaEeeClve-L1nqnQ" memberEnd="__nV9ETSaEeeClve-L1nqnQ __naOgDSaEeeClve-L1nqnQ" navigableOwnedEnd="__naOgDSaEeeClve-L1nqnQ">
+    <ownedEnd xmi:id="__nV9ETSaEeeClve-L1nqnQ" name="factures" type="_3_EkIDSaEeeClve-L1nqnQ" association="__nV9EDSaEeeClve-L1nqnQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__nZAYDSaEeeClve-L1nqnQ"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__nZncDSaEeeClve-L1nqnQ" value="1"/>
+    </ownedEnd>
+    <ownedEnd xmi:id="__naOgDSaEeeClve-L1nqnQ" name="lignes" type="_6dwNEDSaEeeClve-L1nqnQ" aggregation="composite" association="__nV9EDSaEeeClve-L1nqnQ">
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="__na1kDSaEeeClve-L1nqnQ"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="__nbcoDSaEeeClve-L1nqnQ" value="*"/>
+    </ownedEnd>
+  </packagedElement>
+</uml:Model>

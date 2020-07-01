@@ -1,17 +1,23 @@
 package com.lightpro.sales.cmd;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.UUID;
 
+import com.common.utilities.convert.TimeConvert;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sales.domains.api.PaymentMode;
 
 public class PaymentEdited {
 	
 	private final String object;
 	private final LocalDate paymentDate;
 	private final double paidAmount;
-	private final PaymentMode mode;
+	private final UUID modeId;
+	private final UUID provisionId;
+	private final String transactionReference;
+	private final int typeId;
 	
 	public PaymentEdited(){
 		throw new UnsupportedOperationException("#PaymentEdited()");
@@ -19,14 +25,20 @@ public class PaymentEdited {
 	
 	@JsonCreator
 	public PaymentEdited(@JsonProperty("object") final String object,
-							  @JsonProperty("paymentDate") final LocalDate paymentDate, 
+							  @JsonProperty("paymentDate") final Date paymentDate, 
 					    	  @JsonProperty("paidAmount") final double paidAmount,
-					    	  @JsonProperty("modeId") final int modeId){
+					    	  @JsonProperty("modeId") final UUID modeId,
+					    	  @JsonProperty("provisionId") final UUID provisionId,
+					    	  @JsonProperty("transactionReference") final String transactionReference,
+					    	  @JsonProperty("typeId") final int typeId){
 		
+		this.provisionId = provisionId;
 		this.object = object;
-		this.paymentDate = paymentDate;
+		this.paymentDate = TimeConvert.toLocalDate(paymentDate, ZoneId.systemDefault());;
 		this.paidAmount = paidAmount;
-		this.mode = PaymentMode.get(modeId);
+		this.modeId = modeId;
+		this.transactionReference = transactionReference;
+		this.typeId = typeId;
 	}
 	
 	public String object(){
@@ -41,7 +53,19 @@ public class PaymentEdited {
 		return paidAmount;
 	}
 	
-	public PaymentMode mode(){
-		return mode;
+	public UUID modeId(){
+		return modeId;
+	}
+	
+	public String transactionReference(){
+		return transactionReference;
+	}
+	
+	public int typeId(){
+		return typeId;
+	}
+	
+	public UUID provisionId(){
+		return provisionId;
 	}
 }

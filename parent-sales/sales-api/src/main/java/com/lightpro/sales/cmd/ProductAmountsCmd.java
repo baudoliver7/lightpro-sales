@@ -1,38 +1,47 @@
 package com.lightpro.sales.cmd;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProductAmountsCmd {
-	private final int quantity;
-	private final double reductionAmount;
+	private final double quantity;
 	private final LocalDate orderDate;
+	private final double unitPrice;
+	
+	private final List<TaxEdited> taxes;
 	
 	public ProductAmountsCmd(){
 		throw new UnsupportedOperationException("#ProductAmountsCmd()");
 	}
 	
 	@JsonCreator
-	public ProductAmountsCmd(@JsonProperty("quantity") final int quantity, 
-							 @JsonProperty("reductionAmount") final double reductionAmount, 
-				    	     @JsonProperty("orderDate") final LocalDate orderDate){
+	public ProductAmountsCmd(@JsonProperty("quantity") final double quantity, 
+				    	     @JsonProperty("orderDate") final LocalDate orderDate,
+				    	     @JsonProperty("unitPrice") final double unitPrice,
+				    	     @JsonProperty("taxes") final List<TaxEdited> taxes){
 		
 		this.quantity = quantity;
+		this.unitPrice = unitPrice;
 		this.orderDate = orderDate;
-		this.reductionAmount = reductionAmount;
+		this.taxes = taxes;
 	}
 	
 	public LocalDate orderDate(){
 		return orderDate;
 	}
 	
-	public int quantity(){
+	public double quantity(){
 		return quantity;
 	}
 	
-	public double reductionAmount(){
-		return reductionAmount;
+	public List<TaxEdited> taxes(){
+		return taxes;
+	}
+	
+	public double unitPrice(){
+		return unitPrice;
 	}
 }

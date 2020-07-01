@@ -27,6 +27,10 @@ public class CustomerMetadata implements DomainMetadata {
 		return this.keyName;
 	}
 	
+	public String moduleIdKey(){
+		return "moduleid";
+	}	
+	
 	public static CustomerMetadata create(){
 		return new CustomerMetadata();
 	}

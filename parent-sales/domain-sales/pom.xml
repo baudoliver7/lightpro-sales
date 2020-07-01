@@ -17,5 +17,15 @@
   		<artifactId>securities</artifactId>
   		<version>1.0</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.lightpro.app</groupId>
+  		<artifactId>domain-stocks</artifactId>
+  		<version>1.0</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.lightpro.app</groupId>
+  		<artifactId>domain-compta</artifactId>
+  		<version>1.0</version>
+  	</dependency>
   </dependencies>
 </project>

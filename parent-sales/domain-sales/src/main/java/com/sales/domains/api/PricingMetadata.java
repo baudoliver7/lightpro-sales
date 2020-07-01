@@ -34,4 +34,16 @@ public class PricingMetadata implements DomainMetadata {
 	public String fixPriceKey(){
 		return "fixprice";
 	}		
+	
+	public String reduceValueTypeIdKey(){
+		return "reduce_value_type_id";
+	}
+	
+	public String reduceValueKey(){
+		return "reduce_value";
+	}	
+	
+	public static PricingMetadata create(){
+		return new PricingMetadata();
+	}
 }
